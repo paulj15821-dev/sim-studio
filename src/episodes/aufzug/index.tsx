@@ -83,7 +83,7 @@ export const aufzug: Episode = {
           pose={(t) => (t < 1.3 ? "press" : "idle")} maxRotY={(t) => (t < 1.3 ? Math.PI : t < 1.7 ? Math.PI * (1 - (t - 1.3) / 0.4) : 0)} />
       ),
     },
-    { at: 3.2, name: "Innen, Display", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([0.85, 1.6, 1.0], [0.65, 1.65, 0.8], [-0.15, 1.6, -1.2])} pose="idle" /> },
+    { at: 3.2, name: "Innen, Display", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([-1.0, 1.2, 1.08], [-0.9, 1.3, 0.98], [0.45, 1.65, -0.9], [0.4, 1.7, -1.0], 66)} pose="idle" /> },
     {
       at: 6.0, name: "Leute schauen hoch",
       render: (s) => <ElevatorWorld shot={s} mode="low" cam={({ p, h }) => ({ pos: keys3([{ t: 0, v: [6, 1.5 - h, 24] }, { t: 1, v: [4, 1.5 - h, 22] }], p), look: [0, 1, 0], fov: 50 })} pose="lookUp" />,
@@ -98,7 +98,7 @@ export const aufzug: Episode = {
     { at: 17.0, name: "Seitlich, Streaks", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([3.6, 1.3, 4.6], [3.2, 1.2, 4.0], [0, 1.5, 0], undefined, 40)} pose="shock" expression="shock" /> },
     { at: 18.85, transition: "flash", name: "Schallmauer", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([-3, -4, 4.5], [-3.4, -4.6, 5.2], [0, 2, 0], undefined, 50)} pose="shock" expression="shock" /> },
     { at: 20.6, name: "Wolken", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([4, -1, 7], [4.5, -0.5, 7.5], [0, 1.4, 0])} pose="lookUp" /> },
-    { at: 23.0, name: "Über den Wolken", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([6, 12, 10], [7, 13, 12], [0, -25, 0])} pose="idle" /> },
+    { at: 23.0, name: "Über den Wolken", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([5, 10, 8], [6, 11, 9.5], [0, -6, 0])} pose="idle" /> },
     { at: 25.6, name: "Flugzeug", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([3, 10, 4], [3.2, 10.5, 4.3], [0, -60, 0], undefined, 52)} pose="wave" expression="happy" /> },
     // ── Wissen / Staunen ──
     { at: 27.0, name: "Plasma", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([4.5, 1.2, 5.5], [5.2, 1.0, 6.4], [0, 1.6, 0])} pose="shock" expression="shock" /> },
@@ -114,12 +114,12 @@ export const aufzug: Episode = {
           }} />
       ),
     },
-    { at: 39.5, name: "Erde unter ihm", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([6, 9, 8], [7, 10, 9.5], [0, -40, 0])} pose="idle" /> },
+    { at: 39.5, name: "Erde unter ihm", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([2.5, 6, 3.5], [2.9, 6.6, 4.1], [0, -2, 0], [0, -2.5, 0])} pose="idle" /> },
     // ── Extrem ──
     {
       at: 43.0, name: "Fahrstuhlmusik",
       render: (s) => (
-        <ElevatorWorld shot={s} mode="high" cam={move([0.8, 1.6, 1.0], [0.7, 1.62, 0.9], [-0.1, 1.5, -1.2])}
+        <ElevatorWorld shot={s} mode="high" cam={move([-1.0, 1.2, 1.08], [-0.92, 1.28, 1.0], [0.45, 1.65, -0.9], [0.4, 1.7, -1.0], 66)}
           pose={(t) => (t < 44.9 ? "idle" : "press")} maxRotY={(t) => (t < 44.6 ? 0 : t < 44.9 ? Math.PI * ((t - 44.6) / 0.3) : Math.PI)} />
       ),
     },
@@ -133,8 +133,15 @@ export const aufzug: Episode = {
           }} />
       ),
     },
-    { at: 51.0, name: "Erde als Murmel", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([4, 6, 6], [4.4, 6.5, 6.8], [0, -30, 0])} pose="idle" expression="shock" /> },
-    { at: 54.0, name: "Mond kommt", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([3, -5, 4], [3.4, -6, 4.6], [0, 30, 0], undefined, 50)} pose="lookUp" expression="shock" /> },
+    { at: 51.0, name: "Erde als Murmel", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([1.5, 6, 2.5], [1.8, 6.6, 3.0], [0, -3, 0], [0, -3.4, 0])} pose="idle" expression="shock" /> },
+    {
+      at: 54.0, name: "Mond kommt",
+      // Tele-Zoom: der Mond ist real nur ~1–4° groß → fov fährt von 34° auf 9° zu
+      render: (s) => (
+        <ElevatorWorld shot={s} mode="high" pose="lookUp" expression="shock"
+          cam={({ p }) => ({ pos: keys3([{ t: 0, v: [5, -16, 7] }, { t: 1, v: [5.5, -18, 7.6] }], p), look: [0, 400, 0], fov: 34 - 25 * p * p })} />
+      ),
+    },
     // ── Payoff ──
     { at: ARRIVE, transition: "flash", name: "Mond", render: (s) => <MoonLanding shot={s} /> },
   ],

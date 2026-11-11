@@ -86,7 +86,11 @@ export const Cabin: React.FC<{ floorText: string; doors?: number; litButton?: bo
       </group>
       {/* Deckenlicht */}
       <Box size={[1.2, 0.03, 1.2]} color="#FFFFFF" emissive="#FFFFFF" position={[0, Hh - 0.02, 0]} cast={false} />
-      <pointLight position={[0, Hh - 0.3, 0]} intensity={3 * unit * unit} distance={6 * unit} decay={2} color="#FFF4E0" />
+      {/* three.js begrenzt den Abfall auf 1/max(d², 0.01) → in der km-Welt (unit=0.001) wäre decay=2 ~10.000× zu dunkel.
+          Darum dort ohne Abfall (decay 0) mit festen Intensitäten, die dem Meter-Look entsprechen. */}
+      <pointLight position={[0, Hh - 0.3, 0]} intensity={unit === 1 ? 3 : 1.1} distance={6 * unit} decay={unit === 1 ? 2 : 0} color="#FFF4E0" />
+      {/* Fülllicht vorne (reicht nur ~4 m) – sonst sind Max' Schattenseiten im All pechschwarz */}
+      <pointLight position={[-0.6, 1.5, 1.0]} intensity={unit === 1 ? 1.2 : 0.6} distance={4 * unit} decay={unit === 1 ? 2 : 0} color="#E8F0FF" />
     </group>
   );
 };
@@ -214,7 +218,7 @@ const HighWorld: React.FC<{ hk: number; t: number; markerSize: number; showMarke
       {hk < 200 && <SkyDome top={skyTop(h)} horizon={skyHorizon(h)} bottom={skyHorizon(h)} radius={2500} />}
       <Stars n={2600} radius={1_000_000} opacity={Math.min(1, Math.max(0, (hk - 25) / 60))} />
       <SunGlow position={[300000, 130000, 200000]} size={42000} />
-      <Earth radius={R} position={earthC} rotationY={t * 0.02} detail={6} cloudHeight={0.0016} />
+      <Earth radius={R} position={earthC} rotationY={1.1 + t * 0.02} tilt={0.95} detail={6} cloudHeight={0.0016} />
       {rings && <OrbitRing radius={R + 408} position={earthC} tilt={0.5} color={COLOR.accent} opacity={0.6} />}
       {rings && <GeoRing center={earthC} />}
       <Moon radius={1737} position={[0, 384400 - R - hk, 0]} />
@@ -287,7 +291,7 @@ export const MoonLanding: React.FC<{ shot: ShotInfo }> = ({ shot }) => {
   const walking = t > 57.6 && t < 60.2;
   const maxZ = -0.1 + walkT * 4.2;
   const camPos = keys3([{ t: 0, v: [5.5, 1.5, 9.5] }, { t: 6.1, v: [3.2, 1.7, 9.0] }], local);
-  const look = keys3([{ t: 0, v: [0, 1.5, 0] }, { t: 6.1, v: [0, 1.4, 2.6] }], local);
+  const look = keys3([{ t: 0, v: [0, 1.5, 0] }, { t: 6.1, v: [-1.3, 1.5, 2.6] }], local); // Max rechts der Mitte → HUD links verdeckt ihn nicht
   const dust = Math.max(0, 1 - local / 1.2);
   const r = shake(t, Math.max(0, 0.08 - local * 0.12), 20);
   return (

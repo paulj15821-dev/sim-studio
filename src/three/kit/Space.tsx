@@ -64,8 +64,10 @@ export const Atmosphere: React.FC<{ radius: number; color?: string; power?: numb
 };
 
 /** Low-poly-Erde mit Kontinenten, Eiskappen, Wolkenhülle und Atmosphäre. */
-export const Earth: React.FC<{ radius?: number; position?: Vec3; rotationY?: number; clouds?: boolean; atmosphere?: boolean; night?: boolean; seed?: number; detail?: number; cloudHeight?: number }> = ({
-  radius = 1, position = [0, 0, 0], rotationY = 0, clouds = true, atmosphere = true, night = false, seed = 3, detail = 5, cloudHeight = 0.015,
+/** `tilt` = Achsneigung (rad) um X. Achtung: bei 0,41 liegt der Pol fast genau oben (+Y) –
+ *  wer von oben auf die Erde schaut (z. B. Aufzug), sollte ~0,9 nehmen, sonst sieht man nur Eis/Tundra. */
+export const Earth: React.FC<{ radius?: number; position?: Vec3; rotationY?: number; tilt?: number; clouds?: boolean; atmosphere?: boolean; night?: boolean; seed?: number; detail?: number; cloudHeight?: number }> = ({
+  radius = 1, position = [0, 0, 0], rotationY = 0, tilt = 0.41, clouds = true, atmosphere = true, night = false, seed = 3, detail = 5, cloudHeight = 0.015,
 }) => {
   const ground = useMemo(
     () =>
@@ -86,7 +88,7 @@ export const Earth: React.FC<{ radius?: number; position?: Vec3; rotationY?: num
   );
   return (
     <group position={position}>
-      <group rotation={[0.41, rotationY, 0]} scale={radius}>
+      <group rotation={[tilt, rotationY, 0]} scale={radius}>
         <mesh geometry={ground} receiveShadow>
           <meshStandardMaterial vertexColors flatShading roughness={0.85} emissive={night ? "#FFD27A" : "#000000"} emissiveIntensity={night ? 0.0 : 0} />
         </mesh>
