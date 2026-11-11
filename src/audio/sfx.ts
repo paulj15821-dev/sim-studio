@@ -85,21 +85,26 @@ export function buildVoices(ep: Episode, fps = 30): Voice[] {
     else if (cfg.cuts && !s.silentCut) add({ sound: "whoosh", from: s.at - 0.3, volume: 0.22, rate: vary(k, 0.85, 1.2), tag: "cut" });
   });
 
-  // 3. HUD
-  const hud = ep.hud;
-  if (hud?.pill && cfg.ticks) {
-    const start = hud.pill.startAt ?? 0, stop = Math.min(hud.pill.stopAt ?? ep.duration, ep.duration);
-    for (let k = 1, t = start + hud.pill.every; t < stop - 0.05; k++, t = start + k * hud.pill.every)
-      add({ sound: "tick", from: t, volume: 0.2, rate: Math.min(1.6, 1 + k * 0.02), tag: "tick" });
-  }
-  if (hud?.compare && cfg.milestones) {
+  // 3. HUD (ein oder mehrere HUDs; compareDir "down" = Schwellen werden unterschritten)
+  const huds = !ep.hud ? [] : Array.isArray(ep.hud) ? ep.hud : [ep.hud];
+  for (const hud of huds) {
     const from = hud.from ?? 0, until = Math.min(hud.until ?? ep.duration, ep.duration);
-    let last = -1;
-    for (let f = Math.ceil(from * fps); f <= until * fps; f++) {
-      const val = hud.value(f / fps);
-      let idx = -1;
-      hud.compare.forEach((c, i) => { if (val >= c.at) idx = i; });
-      if (idx > last) { if (last >= 0 || f / fps > from + 0.2) add({ sound: "ding", from: f / fps, volume: 0.32, rate: vary(idx, 0.94, 1.06), tag: "meilenstein" }); last = idx; }
+    if (hud.pill && cfg.ticks) {
+      const start = Math.max(hud.pill.startAt ?? 0, from), stop = Math.min(hud.pill.stopAt ?? until, until);
+      const base = hud.pill.startAt ?? 0;
+      for (let k = 1, t = base + hud.pill.every; t < stop - 0.05; k++, t = base + k * hud.pill.every)
+        if (t > start) add({ sound: "tick", from: t, volume: 0.2, rate: Math.min(1.6, 1 + k * 0.02), tag: "tick" });
+    }
+    if (hud.compare && cfg.milestones) {
+      const down = hud.compareDir === "down";
+      const sorted = [...hud.compare].sort((a, b) => (down ? b.at - a.at : a.at - b.at));
+      let last = -1;
+      for (let f = Math.ceil(from * fps); f <= until * fps; f++) {
+        const val = Math.abs(hud.value(f / fps));
+        let idx = -1;
+        sorted.forEach((c, i) => { if (down ? val <= c.at : val >= c.at) idx = i; });
+        if (idx > last) { if (last >= 0 || f / fps > from + 0.2) add({ sound: "ding", from: f / fps, volume: 0.32, rate: vary(idx, 0.94, 1.06), tag: "meilenstein" }); last = idx; }
+      }
     }
   }
 

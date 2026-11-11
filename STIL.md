@@ -3,7 +3,7 @@
 Alles hier ist in `src/style/theme.ts` als Code hinterlegt. Änderst du dort etwas, ändert sich jedes Video.
 
 ## Format
-- 1080 × 1920, 30 fps, 61–65 s, H.264 (CRF 18). Kein Ton (Musik fügst du selbst hinzu).
+- 1080 × 1920, 30 fps, 61–65 s, H.264 (CRF 18), AAC-Ton mit Soundeffekten. Musik/Voice-over fügt der Nutzer selbst hinzu.
 
 ## Schrift
 - **Instrument Serif** – Hook, Untertitel, HUD-Zahl.
@@ -56,3 +56,13 @@ Glanz kommt aus `roughness` (0,3–0,5 für Lack/Plastik/Metall), nicht aus Farb
 
 ## Grading
 Leichte Vignette + feines Korn über allem (`<Grade>`), wärmt flache 3D-Renderings an.
+
+## Sound
+Alle Sounds sind selbst synthetisiert (`scripts/make-sfx.mjs`) – keine Lizenzprobleme, einheitlicher Klang.
+- **Atmo in jeder Szene** (`shot.ambience`), leise (0,3–0,6). Wechselt mit der Welt: Stadt → Wind → All.
+- **Jede Aktion hat einen Sound**: Knopf, Tür, Schritte, Handy, Einschlag, Glas, Flugzeug …
+- **Spannung aufbauen**: `riser` (2,6 s) / `riser_long` (5 s) so setzen, dass sie *auf* dem Höhepunkt enden;
+  `tension` als Atmo in den letzten Sekunden davor.
+- **Höhepunkt = lautester Moment** (`boom`, `sonic_boom`, `impact`), danach kurz Ruhe.
+- **Pointe**: ein kleiner, wiedererkennbarer Sound (Gong, Türklingel, Fahrstuhlmusik) – Komik braucht Timing.
+- Pegel: SFX allein ca. -18 LUFS, Spitze ≤ -1 dBFS – darüber kommt noch Musik.
