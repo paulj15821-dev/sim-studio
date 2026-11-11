@@ -7,35 +7,80 @@ import { Box, Flat, Glass } from "./materials";
 
 // ───────────── Texturen ─────────────
 
-const texCache = new Map<string, THREE.CanvasTexture>();
-/** Fassadentextur mit Fensterraster; eine Kachel = 1 Etage × 1 Fensterachse */
-export function windowTexture(facade: string, lit = false) {
+const texCache = new Map<string, { map: THREE.CanvasTexture; rough: THREE.CanvasTexture; emit: THREE.CanvasTexture }>();
+const TILE_X = 4, TILE_Y = 4; // eine Textur-Kachel = 4 Fensterachsen × 4 Etagen (mit Variation)
+
+/**
+ * Fassadentextur + passende Rauheits-/Metallkarte. Scheiben sind glatt und leicht metallisch →
+ * sie spiegeln Himmel und Sonne (über das Umgebungslicht der Stage), die Wand bleibt matt.
+ */
+export function windowTextures(facade: string, lit = false) {
   const k = facade + lit;
   if (texCache.has(k)) return texCache.get(k)!;
-  const c = document.createElement("canvas");
-  c.width = 64; c.height = 64;
-  const g = c.getContext("2d")!;
-  g.fillStyle = facade; g.fillRect(0, 0, 64, 64);
-  g.fillStyle = lit ? "#FFE7A8" : "#5D7894";
-  g.fillRect(14, 16, 36, 34);
-  g.fillStyle = lit ? "#FFF6D8" : "#8FB1CF";
-  g.fillRect(14, 16, 36, 8);
-  g.fillStyle = "rgba(0,0,0,0.12)"; g.fillRect(0, 58, 64, 6);
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  t.magFilter = THREE.LinearFilter;
-  t.anisotropy = 4;
-  texCache.set(k, t);
-  return t;
+  const S = 64, W = S * TILE_X, H = S * TILE_Y;
+  const c = document.createElement("canvas"), cr = document.createElement("canvas"), ce = document.createElement("canvas");
+  c.width = cr.width = ce.width = W; c.height = cr.height = ce.height = H;
+  const g = c.getContext("2d")!, gr = cr.getContext("2d")!, ge = ce.getContext("2d")!;
+  ge.fillStyle = "#000"; ge.fillRect(0, 0, W, H);
+  const r = rng(facade.split("").reduce((a, ch) => a + ch.charCodeAt(0), 0) + (lit ? 7 : 0));
+  // Wand mit leichtem Schmutz/Varianz
+  g.fillStyle = facade; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 400; i++) {
+    g.fillStyle = `rgba(${r.next() < 0.5 ? "0,0,0" : "255,255,255"},${r.range(0.01, 0.04)})`;
+    g.fillRect(r.range(0, W), r.range(0, H), r.range(2, 18), r.range(2, 18));
+  }
+  // Rauheit (G-Kanal) + Metall (B-Kanal): Wand rau, nicht metallisch
+  gr.fillStyle = "rgb(0,235,0)"; gr.fillRect(0, 0, W, H);
+  for (let fy = 0; fy < TILE_Y; fy++) {
+    // Geschossband
+    g.fillStyle = "rgba(0,0,0,0.10)"; g.fillRect(0, fy * S + S - 5, W, 5);
+    g.fillStyle = "rgba(255,255,255,0.10)"; g.fillRect(0, fy * S + S - 6, W, 1);
+    for (let fx = 0; fx < TILE_X; fx++) {
+      const x = fx * S + 13, y = fy * S + 14, w = 38, h = 36;
+      // Laibung (Schatten oben/links)
+      g.fillStyle = "rgba(0,0,0,0.28)"; g.fillRect(x - 2, y - 2, w + 4, h + 4);
+      const on = lit && r.next() < 0.4;
+      // Scheibe: dunkles Blaugrau mit Himmelsverlauf (die echte Spiegelung kommt vom Umgebungslicht)
+      const grd = g.createLinearGradient(0, y, 0, y + h);
+      if (on) { grd.addColorStop(0, "#FFE9B0"); grd.addColorStop(1, "#F2C878"); }
+      else { const t = r.range(0, 1); grd.addColorStop(0, t < 0.5 ? "#6F8CA8" : "#5A7590"); grd.addColorStop(1, "#2C3A4A"); }
+      g.fillStyle = grd; g.fillRect(x, y, w, h);
+      // Jalousie/Vorhang in manchen Fenstern
+      if (!on && r.next() < 0.3) { g.fillStyle = r.pick(["#D9D2C3", "#BFB6A6", "#E8E3D8"]); g.fillRect(x, y, w, h * r.range(0.25, 0.7)); }
+      // Fensterkreuz + Rahmen
+      g.fillStyle = "#EDEDED"; g.fillRect(x + w / 2 - 1.5, y, 3, h); g.fillRect(x, y + h * 0.38, w, 2);
+      g.strokeStyle = "#F4F4F4"; g.lineWidth = 2; g.strokeRect(x + 1, y + 1, w - 2, h - 2);
+      // Fensterbank
+      g.fillStyle = "rgba(255,255,255,0.55)"; g.fillRect(x - 3, y + h + 2, w + 6, 3);
+      // Glas: glatt (Rauheit ~0.08) und etwas metallisch (stärkere Spiegelung)
+      if (on) { ge.fillStyle = r.pick(["#FFD892", "#FFE6B8", "#F2B96A", "#CFE3FF"]); ge.globalAlpha = r.range(0.45, 1); ge.fillRect(x, y, w, h); ge.globalAlpha = 1; }
+      gr.fillStyle = on ? "rgb(0,120,0)" : "rgb(0,20,150)"; gr.fillRect(x + 2, y + 2, w - 4, h - 4);
+    }
+  }
+  const mk = (cv: HTMLCanvasElement, srgb: boolean) => {
+    const t = new THREE.CanvasTexture(cv);
+    if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.anisotropy = 8;
+    return t;
+  };
+  const out = { map: mk(c, true), rough: mk(cr, false), emit: mk(ce, true) };
+  texCache.set(k, out);
+  return out;
 }
+/** @deprecated – nur noch für Kompatibilität; liefert die Farbtextur */
+export const windowTexture = (facade: string, lit = false) => windowTextures(facade, lit).map;
 
 /** Fassade für ein Gebäude der Größe w×h×d (3,2 m pro Etage, 3 m pro Achse) */
 function facadeTex(facade: string, w: number, h: number, lit = false) {
-  const t = windowTexture(facade, lit).clone();
-  t.needsUpdate = true;
-  t.repeat.set(Math.max(1, Math.round(w / 3)), Math.max(1, Math.round(h / 3.2)));
-  return t;
+  const src = windowTextures(facade, lit);
+  const rep = (t: THREE.Texture) => {
+    const c = t.clone();
+    c.needsUpdate = true;
+    c.repeat.set(Math.max(1, Math.round(w / 3)) / TILE_X, Math.max(1, Math.round(h / 3.2)) / TILE_Y);
+    return c;
+  };
+  return { map: rep(src.map), rough: rep(src.rough), emit: rep(src.emit) };
 }
 
 /** Riesige Luftbild-Textur: Stadtkern + Felder drumherum (für große Höhen) */
@@ -93,7 +138,10 @@ export const Building: React.FC<{ size: Vec3; position?: Vec3; color?: string; r
   const mats = useMemo(() => {
     const side = facadeTex(facade, w, h, lit);
     const side2 = facadeTex(facade, d, h, lit);
-    const mk = (map?: THREE.Texture, col = "#ffffff") => new THREE.MeshStandardMaterial({ color: map ? "#ffffff" : col, map, roughness: 0.9, flatShading: true });
+    const mk = (t?: { map: THREE.Texture; rough: THREE.Texture; emit: THREE.Texture }, col = "#ffffff") =>
+      t
+        ? new THREE.MeshStandardMaterial({ map: t.map, roughnessMap: t.rough, metalnessMap: t.rough, roughness: 1, metalness: 1, emissive: lit ? "#FFFFFF" : "#000000", emissiveMap: lit ? t.emit : null, emissiveIntensity: lit ? 0.75 : 0 })
+        : new THREE.MeshStandardMaterial({ color: col, roughness: 0.92, flatShading: true });
     const top = mk(undefined, roof ?? r.pick(PALETTE.roof));
     return [mk(side2), mk(side2), top, top, mk(side), mk(side)];
   }, [facade, w, h, d, lit, roof]);

@@ -86,7 +86,11 @@ export const Cabin: React.FC<{ floorText: string; doors?: number; litButton?: bo
       </group>
       {/* Deckenlicht */}
       <Box size={[1.2, 0.03, 1.2]} color="#FFFFFF" emissive="#FFFFFF" position={[0, Hh - 0.02, 0]} cast={false} />
-      <pointLight position={[0, Hh - 0.3, 0]} intensity={3 * unit * unit} distance={6 * unit} decay={2} color="#FFF4E0" />
+      {/* three.js begrenzt den Abfall auf 1/max(d², 0.01) → in der km-Welt (unit=0.001) wäre decay=2 ~10.000× zu dunkel.
+          Darum dort ohne Abfall (decay 0) mit festen Intensitäten, die dem Meter-Look entsprechen. */}
+      <pointLight position={[0, Hh - 0.3, 0]} intensity={unit === 1 ? 3 : 1.1} distance={6 * unit} decay={unit === 1 ? 2 : 0} color="#FFF4E0" />
+      {/* Fülllicht vorne (reicht nur ~4 m) – sonst sind Max' Schattenseiten im All pechschwarz */}
+      <pointLight position={[-0.6, 1.5, 1.0]} intensity={unit === 1 ? 1.2 : 0.6} distance={4 * unit} decay={unit === 1 ? 2 : 0} color="#E8F0FF" />
     </group>
   );
 };
@@ -95,7 +99,7 @@ export const Cabin: React.FC<{ floorText: string; doors?: number; litButton?: bo
 const Rails: React.FC<{ below: number; above: number }> = ({ below, above }) => (
   <group>
     {[-1, 1].map((s) => (
-      <Box key={s} size={[0.14, below + above, 0.14]} color={PALETTE.steel} position={[s * 1.32, (above - below) / 2, -1.32]} cast={false} />
+      <Box key={s} size={[0.14, below + above, 0.14]} color={PALETTE.steel} position={[s * 1.32, (above - below) / 2, -1.32]} cast={false} bevel={0} />
     ))}
   </group>
 );
@@ -107,6 +111,9 @@ export const floorText = (h: number) => {
 };
 
 // ───────────── Himmel nach Höhe ─────────────
+
+/** Sonne im All steiler, damit die Erde unter der Kabine voll beleuchtet ist */
+const SUN_HIGH: Vec3 = [45, 70, 30];
 
 const skyTop = (h: number) =>
   colorStops([{ at: 0, c: "#7FC0F2" }, { at: 3000, c: "#6AAEEB" }, { at: 9000, c: "#4D86D6" }, { at: 16000, c: "#2E5BAE" }, { at: 30000, c: "#152559" }, { at: 60000, c: "#060A1A" }, { at: 110000, c: PALETTE.space }], h);
@@ -211,10 +218,10 @@ const HighWorld: React.FC<{ hk: number; t: number; markerSize: number; showMarke
   const plasma = t < 27 ? 0 : t < 29 ? 1 : Math.max(0, 1 - (t - 29) / 2);
   return (
     <>
-      {hk < 200 && <SkyDome top={skyTop(h)} horizon={skyHorizon(h)} bottom={skyHorizon(h)} radius={2500} />}
+      {hk < 200 && <SkyDome top={skyTop(h)} horizon={skyHorizon(h)} bottom={skyHorizon(h)} radius={2500} sun={SUN_HIGH} haze={Math.max(0, 1 - hk / 80)} />}
       <Stars n={2600} radius={1_000_000} opacity={Math.min(1, Math.max(0, (hk - 25) / 60))} />
-      <SunGlow position={[300000, 130000, 200000]} size={42000} />
-      <Earth radius={R} position={earthC} rotationY={t * 0.02} detail={6} cloudHeight={0.0016} />
+      <SunGlow position={[SUN_HIGH[0] * 4500, SUN_HIGH[1] * 4500, SUN_HIGH[2] * 4500]} size={42000} />
+      <Earth radius={R} position={earthC} rotationY={1.1 + t * 0.02} tilt={0.95} detail={6} cloudHeight={0.0016} />
       {rings && <OrbitRing radius={R + 408} position={earthC} tilt={0.5} color={COLOR.accent} opacity={0.6} />}
       {rings && <GeoRing center={earthC} />}
       <Moon radius={1737} position={[0, 384400 - R - hk, 0]} />
@@ -257,7 +264,7 @@ export const ElevatorWorld: React.FC<WorldProps> = ({ shot, mode, cam, pose = "i
       preset={mode === "low" ? "day" : "space"}
       bg={skyTop(h)}
       fog={fog}
-      sunDir={[60, 30, 40]}
+      sunDir={mode === "low" ? [60, 30, 40] : SUN_HIGH}
       sunIntensity={mode === "low" ? 2.6 : 3.0}
       shadowSize={h < 80 ? 70 : 12}
       shadowCenter={h < 80 ? [0, -h * 0.5, 0] : [0, 1, 0]}
@@ -267,7 +274,7 @@ export const ElevatorWorld: React.FC<WorldProps> = ({ shot, mode, cam, pose = "i
       <Camera pos={pos} look={look} fov={c.fov ?? 45} near={mode === "low" ? 0.05 : 0.00005} far={mode === "low" ? 200000 : 3_000_000} />
       {mode === "low" ? (
         <>
-          <SkyDome top={skyTop(h)} horizon={skyHorizon(h)} radius={80000} />
+          <SkyDome top={skyTop(h)} horizon={skyHorizon(h)} radius={80000} sun={[60, 30, 40]} />
           <LowWorld h={h} t={t} v={v} />
         </>
       ) : (
@@ -287,7 +294,7 @@ export const MoonLanding: React.FC<{ shot: ShotInfo }> = ({ shot }) => {
   const walking = t > 57.6 && t < 60.2;
   const maxZ = -0.1 + walkT * 4.2;
   const camPos = keys3([{ t: 0, v: [5.5, 1.5, 9.5] }, { t: 6.1, v: [3.2, 1.7, 9.0] }], local);
-  const look = keys3([{ t: 0, v: [0, 1.5, 0] }, { t: 6.1, v: [0, 1.4, 2.6] }], local);
+  const look = keys3([{ t: 0, v: [0, 1.5, 0] }, { t: 6.1, v: [-1.3, 1.5, 2.6] }], local); // Max rechts der Mitte → HUD links verdeckt ihn nicht
   const dust = Math.max(0, 1 - local / 1.2);
   const r = shake(t, Math.max(0, 0.08 - local * 0.12), 20);
   return (
@@ -308,8 +315,8 @@ export const MoonLanding: React.FC<{ shot: ShotInfo }> = ({ shot }) => {
         </mesh>
       ))}
       <Particles kind="dust" n={160} box={[10, 1.4, 10]} center={[0, 0.5, 0]} time={t} velocity={[0.6, 0.2, 0.4]} opacity={dust} colors={[...PALETTE.moon]} />
-      <Box size={[0.14, 5000, 0.14]} color={PALETTE.steel} position={[-1.32, 2500, -1.32]} />
-      <Box size={[0.14, 5000, 0.14]} color={PALETTE.steel} position={[1.32, 2500, -1.32]} />
+      <Box size={[0.14, 5000, 0.14]} color={PALETTE.steel} position={[-1.32, 2500, -1.32]} bevel={0} />
+      <Box size={[0.14, 5000, 0.14]} color={PALETTE.steel} position={[1.32, 2500, -1.32]} bevel={0} />
       <Cabin floorText="MOND" doors={doors} />
       <Max pose={walking ? "walk" : t > 60.2 ? "lookUp" : "idle"} time={t} position={[0, 0, maxZ]} rotationY={t > 60.2 ? -0.5 : 0} expression={t > 60.2 ? "shock" : "neutral"} />
     </Stage>

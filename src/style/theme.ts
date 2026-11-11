@@ -1,14 +1,30 @@
-import { loadFont as loadSerif } from "@remotion/google-fonts/InstrumentSerif";
-import { loadFont as loadSans } from "@remotion/google-fonts/Inter";
+import { continueRender, delayRender, staticFile } from "remotion";
 
-const serif = loadSerif("normal", { weights: ["400"], subsets: ["latin"] });
-const serifItalic = loadSerif("italic", { weights: ["400"], subsets: ["latin"] });
-const sans = loadSans("normal", { weights: ["500", "600", "700"], subsets: ["latin"] });
+// Schriften liegen lokal in public/fonts (kein Google-Fonts-Abruf beim Rendern →
+// funktioniert offline und hinter Proxys, deren Zertifikat Chrome nicht kennt).
+const FACES: { family: string; file: string; style: string; weight: string }[] = [
+  { family: "Instrument Serif", file: "InstrumentSerif-latin.woff2", style: "normal", weight: "400" },
+  { family: "Instrument Serif", file: "InstrumentSerif-Italic-latin.woff2", style: "italic", weight: "400" },
+  { family: "Inter", file: "Inter-latin.woff2", style: "normal", weight: "500 700" },
+];
+
+if (typeof document !== "undefined") {
+  const handle = delayRender("Lokale Schriften laden");
+  Promise.all(
+    FACES.map(async (f) => {
+      const face = new FontFace(f.family, `url(${staticFile(`fonts/${f.file}`)}) format("woff2")`, { style: f.style, weight: f.weight });
+      await face.load();
+      (document.fonts as unknown as { add(f: FontFace): void }).add(face);
+    }),
+  )
+    .then(() => continueRender(handle))
+    .catch((err) => { console.error("Schrift konnte nicht geladen werden", err); continueRender(handle); });
+}
 
 export const FONT = {
-  serif: serif.fontFamily,
-  serifItalic: serifItalic.fontFamily,
-  sans: sans.fontFamily,
+  serif: '"Instrument Serif", serif',
+  serifItalic: '"Instrument Serif", serif',
+  sans: '"Inter", sans-serif',
 };
 
 export const VIDEO = { width: 1080, height: 1920, fps: 30 };

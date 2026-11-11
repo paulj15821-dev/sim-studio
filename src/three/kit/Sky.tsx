@@ -6,26 +6,67 @@ import type { Vec3 } from "../../lib/anim";
 import { Flat } from "./materials";
 import { Instanced, lumpyIco, type Inst } from "./Instances";
 
-/** Himmelskuppel mit Verlauf (oben → Horizont). Folgt der Kamera nicht – groß genug wählen. */
-export const SkyDome: React.FC<{ top: string; horizon: string; bottom?: string; radius?: number; center?: Vec3 }> = ({ top, horizon, bottom, radius = 4000, center = [0, 0, 0] }) => {
-  const geo = useMemo(() => {
-    const g = new THREE.SphereGeometry(radius, 32, 16);
-    const pos = g.attributes.position as THREE.BufferAttribute;
-    const cols: number[] = [];
-    const cTop = new THREE.Color(top), cHor = new THREE.Color(horizon), cBot = new THREE.Color(bottom ?? horizon);
-    for (let i = 0; i < pos.count; i++) {
-      const y = pos.getY(i) / radius;
-      const c = y >= 0 ? cHor.clone().lerp(cTop, Math.pow(y, 0.6)) : cHor.clone().lerp(cBot, Math.min(1, -y * 3));
-      cols.push(c.r, c.g, c.b);
-    }
-    g.setAttribute("color", new THREE.Float32BufferAttribute(cols, 3));
-    return g;
-  }, [top, horizon, bottom, radius]);
-  return (
-    <mesh geometry={geo} position={center}>
-      <meshBasicMaterial vertexColors side={THREE.BackSide} fog={false} depthWrite={false} toneMapped={false} />
-    </mesh>
+/**
+ * Himmelskuppel: Verlauf oben → Horizont (mit Dunstband) → unten, plus Sonnenscheibe und Lichthof.
+ * `sun` = Richtung zur Sonne (z. B. dieselbe wie `sunDir` der Stage) – weglassen = keine Sonne.
+ * Folgt der Kamera nicht – groß genug wählen.
+ */
+export const SkyDome: React.FC<{ top: string; horizon: string; bottom?: string; radius?: number; center?: Vec3; sun?: Vec3; sunColor?: string; sunSize?: number; haze?: number }> = ({
+  top, horizon, bottom, radius = 4000, center = [0, 0, 0], sun, sunColor = "#FFF3DE", sunSize = 1, haze = 1,
+}) => {
+  const mat = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        uniforms: {
+          uTop: { value: new THREE.Color() }, uHor: { value: new THREE.Color() }, uBot: { value: new THREE.Color() },
+          uSun: { value: new THREE.Vector3(0, 1, 0) }, uSunCol: { value: new THREE.Color() }, uSunOn: { value: 0 }, uSunSize: { value: 1 }, uHaze: { value: 1 },
+        },
+        vertexShader: `
+          #include <common>
+          #include <logdepthbuf_pars_vertex>
+          varying vec3 vDir;
+          void main(){
+            vDir = normalize(position);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            #include <logdepthbuf_vertex>
+          }`,
+        fragmentShader: `
+          #include <logdepthbuf_pars_fragment>
+          uniform vec3 uTop, uHor, uBot, uSun, uSunCol; uniform float uSunOn, uSunSize, uHaze;
+          varying vec3 vDir;
+          void main(){
+            #include <logdepthbuf_fragment>
+            vec3 d = normalize(vDir);
+            float y = d.y;
+            vec3 col = y >= 0.0 ? mix(uHor, uTop, pow(clamp(y, 0.0, 1.0), 0.55)) : mix(uHor, uBot, clamp(-y * 3.0, 0.0, 1.0));
+            // Dunstband direkt am Horizont (heller, etwas wärmer)
+            float hz = exp(-abs(y) * 18.0) * 0.18 * uHaze;
+            col += vec3(hz, hz * 0.97, hz * 0.9);
+            if (uSunOn > 0.5) {
+              float s = max(dot(d, normalize(uSun)), 0.0);
+              col += uSunCol * (pow(s, 6.0) * 0.18 + pow(s, 60.0) * 0.45) * uHaze; // Lichthof
+              col += uSunCol * smoothstep(1.0 - 0.00012 * uSunSize, 1.0 - 0.00005 * uSunSize, s) * 6.0; // Scheibe
+            }
+            gl_FragColor = vec4(col, 1.0);
+            #include <tonemapping_fragment>
+            #include <colorspace_fragment>
+          }`,
+        side: THREE.BackSide,
+        depthWrite: false,
+        fog: false,
+      }),
+    []
   );
+  mat.uniforms.uTop.value.set(top);
+  mat.uniforms.uHor.value.set(horizon);
+  mat.uniforms.uBot.value.set(bottom ?? horizon);
+  mat.uniforms.uSunOn.value = sun ? 1 : 0;
+  if (sun) mat.uniforms.uSun.value.set(sun[0], sun[1], sun[2]);
+  mat.uniforms.uSunCol.value.set(sunColor);
+  mat.uniforms.uSunSize.value = sunSize;
+  mat.uniforms.uHaze.value = haze;
+  const geo = useMemo(() => new THREE.SphereGeometry(radius, 48, 24), [radius]);
+  return <mesh geometry={geo} position={center} material={mat} renderOrder={-1} />;
 };
 
 /** Eine Low-poly-Wolke aus mehreren Kugeln */
