@@ -10,11 +10,11 @@ export type Pose =
 
 export type Outfit = { skin: string; hair?: string; hat?: string; top: string; pants: string; shoes: string; eyes?: string };
 
-const MAX_OUTFIT: Outfit = {
+export const MAX_OUTFIT: Outfit = {
   skin: PALETTE.max.skin, hat: PALETTE.max.beanie, top: PALETTE.max.hoodie, pants: PALETTE.max.pants, shoes: PALETTE.max.shoes, eyes: PALETTE.max.eyes,
 };
 
-type Joints = { lHip: number; rHip: number; lArmX: number; rArmX: number; lArmZ: number; rArmZ: number; headX: number; headY: number; bodyX: number; bob: number; sit: number };
+export type Joints = { lHip: number; rHip: number; lArmX: number; rArmX: number; lArmZ: number; rArmZ: number; headX: number; headY: number; bodyX: number; bob: number; sit: number };
 
 function poseJoints(pose: Pose, time: number, speed: number): Joints {
   const j: Joints = { lHip: 0, rHip: 0, lArmX: 0, rArmX: 0, lArmZ: 0.08, rArmZ: -0.08, headX: 0, headY: 0, bodyX: 0, bob: 0, sit: 0 };
@@ -93,10 +93,21 @@ export const Character: React.FC<{
   expression?: "neutral" | "happy" | "shock";
   /** Gegenstand: "phone" in der rechten Hand (passt zu pose "phone"), "pizza" = Karton vor dem Bauch (pose "carry") */
   hold?: "phone" | "pizza";
-}> = ({ outfit = MAX_OUTFIT, pose = "idle", time = 0, speed = 1.1, position = [0, 0, 0], rotationY = 0, rotation, scale = 1, expression = "neutral", hold }) => {
-  const j = poseJoints(pose, time, speed);
+  /** Gelenke überschreiben (Radiant), z. B. { lHip: -0.8 } hebt das linke Bein */
+  joints?: Partial<Joints>;
+  /** Bartlänge in m (0 = keiner) */
+  beard?: number;
+  /** Lange Haare hinten/seitlich in m (auch unter Mützen) */
+  hairLong?: number;
+  /** Haar-/Bartfarbe (Standard outfit.hair bzw. Braun) */
+  hairColor?: string;
+  /** Augen geschlossen (Schlaf, Koma) */
+  eyesClosed?: boolean;
+}> = ({ outfit = MAX_OUTFIT, pose = "idle", time = 0, speed = 1.1, position = [0, 0, 0], rotationY = 0, rotation, scale = 1, expression = "neutral", hold, joints, beard = 0, hairLong = 0, hairColor, eyesClosed = false }) => {
+  const j = { ...poseJoints(pose, time, speed), ...joints };
+  const hc = hairColor ?? outfit.hair ?? "#6B4428";
   const o = outfit;
-  const eyeH = expression === "shock" ? 0.085 : 0.06;
+  const eyeH = eyesClosed ? 0.014 : expression === "shock" ? 0.085 : 0.06;
   return (
     <group position={position} rotation={rotation ?? [0, rotationY, 0]} scale={scale}>
       <group position={[0, j.bob - j.sit * 0.42, 0]}>
@@ -134,6 +145,14 @@ export const Character: React.FC<{
             <Box size={[0.36, 0.36, 0.34]} color={o.skin} position={[0, 0.18, 0]} />
             <Box size={[0.06, eyeH, 0.02]} color={o.eyes ?? "#1E1E24"} position={[-0.08, 0.21, 0.175]} cast={false} />
             <Box size={[0.06, eyeH, 0.02]} color={o.eyes ?? "#1E1E24"} position={[0.08, 0.21, 0.175]} cast={false} />
+            {beard > 0.001 && (
+              <>
+                <Box size={[0.37, 0.1 + beard * 0.4, 0.06 + Math.min(beard, 0.1) * 0.6]} color={hc} position={[0, 0.07 - beard * 0.2, 0.16]} cast={false} />
+                {beard > 0.06 && <Box size={[0.26, beard, 0.1]} color={hc} position={[0, 0.02 - beard / 2, 0.15]} cast={false} />}
+                <Box size={[0.14, 0.03, 0.03]} color="#5A2A2A" position={[0, 0.1, 0.19 + Math.min(beard, 0.1) * 0.3]} cast={false} bevel={0} />
+              </>
+            )}
+            {hairLong > 0.001 && <Box size={[0.38, 0.22 + hairLong, 0.2]} color={hc} position={[0, 0.28 - hairLong / 2, -0.09]} cast={false} />}
             {expression === "shock" && <Box size={[0.07, 0.07, 0.02]} color="#5A2A2A" position={[0, 0.09, 0.175]} cast={false} />}
             {expression === "happy" && <Box size={[0.12, 0.03, 0.02]} color="#5A2A2A" position={[0, 0.1, 0.175]} cast={false} />}
             {o.hat ? (

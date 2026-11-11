@@ -220,6 +220,24 @@ S.muzak = () => {
   return normRms(loopify(reverb(wide(svf(w, 3500, 0.7, "lp"), 9), 0.5, 0.3, 0.5, 0.01), 1), -22);
 };
 
+
+// Krankenhaus / Alltag (Episode Koma)
+S.buzz = () => { const len = 0.9; const w = env(mix(len, [osc(len, 170, "square"), 0.5], [osc(len, 340, "sine"), 0.3]), (t) => (t % 0.42 < 0.3 ? 1 : 0) * Math.min(1, t / 0.01)); return normPeak(st(svf(w, 900, 0.8, "lp")), -4); };
+S.horn = () => { const len = 1.3; const w = env(mix(len, [osc(len, 392, "saw"), 0.5], [osc(len, 494, "saw"), 0.45], [osc(len, 588, "saw"), 0.2]), (t, p) => Math.min(1, t / 0.02) * Math.min(1, (1 - p) / 0.06)); return normPeak(reverb(wide(sat(svf(w, 2600, 0.9, "lp"), 1.6)), 0.5, 0.25, 0.4, 0.6), -1.5); };
+S.screech = () => { const len = 1.1; const w = env(mix(len, [svf(white(len), (t) => 2600 + 500 * Math.sin(t * 40), 9, "bp"), 1.4], [osc(len, (t) => 1900 + 300 * Math.sin(t * 23), "saw"), 0.06]), (t, p) => Math.min(1, t / 0.04) * Math.pow(1 - p, 0.7)); return normPeak(reverb(pan(w, -0.3), 0.4, 0.25, 0.4, 0.4), -2); };
+S.siren = () => { const len = 4; const w = env(mix(len, [osc(len, (t) => (Math.floor(t / 0.65) % 2 ? 466 : 622), "tri"), 1], [osc(len, (t) => (Math.floor(t / 0.65) % 2 ? 932 : 1244), "sine"), 0.25]), (t, p) => Math.min(1, t / 0.2) * Math.min(1, (1 - p) / 0.15)); return normPeak(reverb(wide(svf(w, 2200, 0.7, "lp")), 0.7, 0.4, 0.4, 1.2), -3); };
+S.beep = () => { const len = 0.35; const w = env(osc(len, 1046), (t) => Math.min(1, t / 0.004) * (t < 0.12 ? 1 : Math.exp(-(t - 0.12) / 0.03))); return normPeak(reverb(st(w), 0.4, 0.25, 0.5, 0.3), -4); };
+S.typing = () => { const len = 1.6; const taps = Array.from({ length: 9 }, (_, k) => [mix(0.06, [click(0.06, 2200 + rand() * 1500, 0.004), 1], [thump(0.06, 300, 180, 0.01), 0.3]), 0.5 + rand() * 0.5, k * 0.16 + rand() * 0.05]); return normPeak(st(mix(len, ...taps)), -6); };
+S.msg_send = () => { const len = 0.5; const w = env(osc(len, (t) => 500 * Math.pow(2.2, Math.min(1, t / 0.12))), (t) => Math.min(1, t / 0.005) * Math.exp(-t / 0.07)); return normPeak(reverb(st(w), 0.3, 0.2, 0.5, 0.3), -4); };
+S.msg_in = () => { const len = 1.2; const w = mix(len, [fm(0.6, note(81), 1, 0.6, 0.18, 0.08), 0.8, 0], [fm(0.8, note(88), 1, 0.6, 0.25, 0.08), 0.8, 0.12]); return normPeak(reverb(wide(w), 0.5, 0.3, 0.4, 0.6), -3); };
+S.amb_hospital = () => {
+  const len = AMB + 1;
+  const beeps = []; for (let t = 0.3; t < len - 0.4; t += 0.86) beeps.push([env(osc(0.14, 1046), (x) => Math.min(1, x / 0.004) * Math.exp(-x / 0.06)), 0.05, t]);
+  const vent = env(svf(pink(len), 700, 0.8, "bp"), (t) => 0.3 + 0.7 * Math.pow(Math.max(0, Math.sin((t / 4.3) * Math.PI * 2)), 2));
+  const w = mix(len, [svf(brown(len), 200, 0.7, "lp"), 1.2], [osc(len, 60), 0.02], [osc(len, 120), 0.01], [vent, 0.25], ...beeps);
+  return normRms(loopify(reverb(wide(w, 9), 0.5, 0.25, 0.5, 0.01), 1), -28);
+};
+
 // ───────────── Erzeugen ─────────────
 const only = process.argv.slice(2);
 console.log("Erzeuge Sounds nach public/sfx …");
