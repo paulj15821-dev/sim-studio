@@ -35,5 +35,24 @@ Jede Episode nutzt Max als Hauptfigur (Wiedererkennung). Nebenfiguren via `<Pers
 - Ein Shot = 2–4 s. Harte Schnitte als Standard, `flash` für Knall-Momente, `dip` für Zeitsprünge.
 - Pro Episode mind. 3 Perspektiven: nah/Follow, Drohne/Weit, Ego oder Froschperspektive.
 
+## Look: „stilisierter Realismus“
+Formen bleiben blockig/low-poly (Wiedererkennung, Max), **Licht und Material sind realistisch**.
+Das macht `<Stage>` automatisch (abschaltbar mit `realism={false}`):
+- **Umgebungslicht (IBL)** pro Preset: weiches Himmelslicht, Bodenreflex, echte Spiegelungen in Glas/Metall/Wasser.
+- **Nachbearbeitung** (`src/three/PostFX.tsx`): MSAA, Ambient Occlusion (Kontaktschatten, nur ohne `logDepth`),
+  Bloom für sehr helle Stellen (Sonne, Lampen, Fenster bei Nacht), ACES-Tonemapping.
+- **Schatten** 4096er-Map – `shadowCenter`/`shadowSize` eng um die Action legen.
+
+Bauteile:
+- `Box` hat leicht gerundete Kanten (`bevel`, Standard 0,12) → fängt Glanzlichter. Für sehr lange/dünne Teile `bevel={0}`.
+- `Glass` = physikalisches Glas (Fresnel-Spiegelung). `Building`-Fassaden: Rahmen, Jalousien, spiegelnde Scheiben; `lit` = Nachtfenster.
+- `SkyDome sun={sunDir}` zeichnet Sonnenscheibe + Lichthof + Horizontdunst – immer dieselbe Richtung wie `sunDir` der Stage.
+- `Earth`/`Moon` sind prozedural im Shader (scharf in jeder Entfernung). Ozean glänzt, Wüsten/Wälder/Eis nach Breite.
+  `tilt` so wählen, dass unter der Kamera nicht der Pol liegt (~0,9–1,2 bei Blick von oben). `lowpoly` = alter Look.
+- Nachts: echte `pointLight`s an Laternen (intensity ~18, distance ~14) – Bloom macht den Rest.
+
+Faustregeln: Sonne nie frontal hinter der Kamera (flach) – lieber seitlich/Gegenlicht. Abendsonne flach (y klein).
+Glanz kommt aus `roughness` (0,3–0,5 für Lack/Plastik/Metall), nicht aus Farbe. Look prüfen: `npm run preview -- Testbild --at 1,3,5,7`.
+
 ## Grading
 Leichte Vignette + feines Korn über allem (`<Grade>`), wärmt flache 3D-Renderings an.

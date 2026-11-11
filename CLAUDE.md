@@ -74,6 +74,9 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 - Schatten nur in Meter-Szenen; `shadowCenter`/`shadowSize` um die Action legen.
 - Geometrien/Texturen mit `useMemo` erzeugen, nicht pro Frame.
 - Polygonbudget pro Shot ~300k Dreiecke; viele gleiche Dinge mit `<Instanced>`.
+- **Look = stilisierter Realismus** (siehe `STIL.md`): `<Stage>` liefert IBL, AO, Bloom automatisch. Nicht abschalten,
+  außer für Tests. `SkyDome` immer mit `sun={sunDir}`. Kein eigenes `useFrame` – die einzige Ausnahme ist `PostFX` (Rendern).
+- Nach Änderungen an Stage/Kit/Materialien: `npm run preview -- Testbild --at 1,3,5,7` ansehen (Look-Regression).
 
 ## Stil-Regeln
 - Hauptfigur ist immer **Max** (`<Max pose=… />`). Nebenfiguren: `<Person seed>` / `<Crowd>`.
@@ -82,8 +85,9 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 - Hook-Formel: „Was wäre, wenn [Alltag] [Regel]?“ – max. 12 Wörter, 1 Highlight.
 
 ## Rendern – Umgebung
-- Cloud ohne GPU (Claude Code im Browser): Standard `GL=swangle` (Software). 62 s ≈ 1.900 Frames → je nach
-  Maschine 20–60 min. Vorher immer `--draft` oder Vorschau nutzen.
+- Cloud ohne GPU (Claude Code im Browser): Standard `GL=swangle` (Software). 62 s ≈ 1.900 Frames → mit dem
+  realistischen Look (IBL/AO/Bloom) braucht ein Frame etwa 3–7× so lange wie vorher (Vorschau: ~1 s → ~7 s) –
+  ein ganzes Video kann mehrere Stunden dauern. Vorher immer `--draft` oder Vorschau nutzen.
 - Mit GPU (Mac/PC lokal): `GL=angle npm run render -- <Id>` ist um ein Vielfaches schneller.
 - `npm install` meldet Peer-Dependency-Konflikte → `npm install --legacy-peer-deps`; alle `@remotion/*` müssen
   dieselbe Version haben (`npx remotion versions` prüft das).
