@@ -9,7 +9,10 @@
     "list": "remotion compositions src/index.ts",
     "preview": "node scripts/preview.mjs",
     "render": "node scripts/render.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "make-sfx": "node scripts/make-sfx.mjs",
+    "sfx": "tsx scripts/sfx-mix.ts",
+    "postinstall": "node scripts/make-sfx.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^8.17.10",
@@ -25,6 +28,7 @@
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@types/three": "^0.169.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.6.0"
   }
 }

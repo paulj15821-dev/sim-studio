@@ -2,7 +2,8 @@
 
 Dieses Repo produziert **virale Low-poly-3D-Simulationsvideos** („Was wenn..?“-Format) für TikTok/Shorts.
 Der Nutzer gibt **eine Zeile** (Idee/Prämisse). Du lieferst ein **fertiges MP4** – ohne Rückfragen,
-außer die Idee ist wirklich unverständlich. Sprache aller Texte im Video: **Deutsch**. Musik fügt der Nutzer selbst hinzu.
+außer die Idee ist wirklich unverständlich. Sprache aller Texte im Video: **Deutsch**. Musik und ggf. Voice-over fügt der Nutzer selbst hinzu –
+**Soundeffekte gehören aber in jedes Video** (siehe „Sound-Design“).
 
 Lies vor der ersten Episode einer Session: `REZEPT.md` (warum es funktioniert) und `STIL.md` (wie es aussieht).
 Die Beispiel-Episode `src/episodes/aufzug/` ist die Referenz für Aufbau, Dichte und Qualität.
@@ -22,8 +23,11 @@ src/
   lib/time.ts         useTimes(shot) → { t, local, p }
   three/Stage.tsx     <Stage preset=…> Canvas + Licht + Nebel, <Camera pos look fov>
   three/kit/          Character (Max, Person, Crowd), Nature, City, Sky, Space, Micro, Interior, Particles
+  audio/sfx.ts        Sound-Bibliothek (SFX-Liste) + automatische Regeln; audio/SoundLayer.tsx spielt sie ab
   episodes/<slug>/    index.tsx (Episode), metric.ts, world.tsx (eigene Szenen)
   episodes/index.ts   Registry – neue Episode hier eintragen
+scripts/make-sfx.mjs  synthetisiert alle Sounds nach public/sfx (läuft automatisch bei npm install)
+scripts/sfx-mix.ts    schnelle Ton-Vorschau: npm run sfx -- <Id>
 ```
 
 ## Erste Session im Repo
@@ -44,10 +48,19 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 4. **Szenen bauen:** Kit wiederverwenden. Fehlt etwas (z. B. Vulkan, U-Bahn, Wal), **neues Bauteil** in
    `src/three/kit/` (allgemein wiederverwendbar) oder in `episodes/<slug>/world.tsx` (episodenspezifisch) schreiben.
    Der Kreativität sind keine Grenzen gesetzt – das Kit ist Startpunkt, nicht Grenze.
+4b. **Sound-Design (Pflicht):** Jeder Shot bekommt `ambience` (Atmo passend zur Szene: `amb_city`, `amb_nature`,
+   `amb_wind(_strong)`, `amb_space`, `amb_interior`, `amb_night`, `amb_crowd`, `amb_underwater`, `amb_lava`, `fire`,
+   `tension`, `muzak`). Jeder sichtbare Moment mit Aktion bekommt einen gezielten Cue in `episode.sfx`
+   (Knall, Tür, Schritte, Handy, Einschlag, Riser vor dem Höhepunkt …) – siehe Aufzug/Asteroid als Referenz.
+   Automatisch kommen dazu: Whoosh pro Schnitt, Blitz/Einschlag bei `flash`, Sub-Drop bei `dip`, Tick pro
+   Verdopplung, Gong pro HUD-Meilenstein, Pop pro Untertitel. Fehlt ein Sound → in `scripts/make-sfx.mjs`
+   synthetisieren und in `SFX` (src/audio/sfx.ts) eintragen. **Keine fremden Sounddateien** (Lizenz/Copyright).
 5. **Registrieren:** in `src/episodes/index.ts` eintragen. `npm run typecheck` muss sauber sein.
 6. **Prüfen (Pflicht, nicht überspringen):** `npm run preview -- <Id>` → `out/preview/<Id>/sheet.jpg` mit dem
    Read-Tool **ansehen**. Dann 4–6 Schlüsselmomente in voller Größe: `npm run preview -- <Id> --at 1,10,30,58`.
    Checkliste unten abarbeiten, Fehler fixen, erneut prüfen (meist 2–3 Runden).
+   **Ton prüfen:** `npm run sfx -- <Id>` → Cue-Liste lesen, `out/<Id>_ton.png` ansehen. Spitze muss ≤ -1 dBFS
+   sein, keine „Zu laut bei“-Zeilen (sonst dort Lautstärken senken), Lautheit ca. -20 … -16 LUFS.
 7. **Rendern:** `npm run render -- <Id>` → `out/<Id>.mp4`. Danach mit ffprobe Dauer/Auflösung prüfen.
 8. **Ausliefern:** MP4 nach `renders/<Id>.mp4` kopieren, committen und pushen (der Nutzer lädt es über GitHub
    herunter, auch am iPad). Dazu Upload-Text aus `episode.upload` + beste Posting-Zeit ausgeben.
@@ -61,6 +74,7 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 - [ ] Nichts ist schwarz/leer/abgeschnitten (Far-Plane, Nebel, Objekte hinter der Kamera prüfen).
 - [ ] Text nie in Sicherheitszonen (oben 160 px, unten 420 px, rechts 140 px), nie über Max' Gesicht.
 - [ ] Farbwelt wechselt über die Phasen, aber jede Szene nutzt nur 3–5 Hauptfarben aus `PALETTE`.
+- [ ] Ton: jede Szene hat Atmo, jede Aktion ihren Sound, Höhepunkt am lautesten, Spitze ≤ -1 dBFS.
 - [ ] Pointe am Ende sitzt; Video endet direkt danach (kein Abspann). Länge 61–65 s.
 
 ## Harte Regeln (sonst kaputte Renders)
@@ -76,6 +90,8 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 - Polygonbudget pro Shot ~300k Dreiecke; viele gleiche Dinge mit `<Instanced>`.
 - **Look = stilisierter Realismus** (siehe `STIL.md`): `<Stage>` liefert IBL, AO, Bloom automatisch. Nicht abschalten,
   außer für Tests. `SkyDome` immer mit `sun={sunDir}`. Kein eigenes `useFrame` – die einzige Ausnahme ist `PostFX` (Rendern).
+- Bereits gerendertes Video nachträglich vertonen (ohne Neu-Render): Video nach `out/<Id>.mp4`, dann
+  `npm run sfx -- <Id> --mux` → `out/<Id>_mit_ton.mp4`.
 - Nach Änderungen an Stage/Kit/Materialien: `npm run preview -- Testbild --at 1,3,5,7` ansehen (Look-Regression).
 
 ## Stil-Regeln

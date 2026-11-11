@@ -91,16 +91,16 @@ export const asteroid: Episode = {
   shots: [
     // ── 1 Alltag: goldene Stunde ──
     {
-      at: 0, name: "Garten, Max grillt",
+      at: 0, name: "Garten, Max grillt", ambience: "amb_nature",
       render: (s) => (
         <Hometown shot={s} mood="golden" cam={move([7.5, 1.5, 17.5], [5.4, 1.6, 14.2], [0.4, 1.9, 8.2], [0.6, 1.8, 8.4], 46)}
           actors={[{ kind: "max", pos: [1.3, 0, 8.6], rotY: 1.2, pose: "idle", expr: "happy" }, NEIGHBOR(7, [-7, 0, 9.5], 0.6, "wave")]}
           meteor={() => ({ elev: 20, size: 40, tail: 0 })} />
       ),
     },
-    { at: 3.0, name: "Weltall: Mond", render: (s) => <SpaceScene shot={s} layout="moon" /> },
+    { at: 3.0, name: "Weltall: Mond", ambience: "amb_space", render: (s) => <SpaceScene shot={s} layout="moon" /> },
     {
-      at: 5.6, name: "Handys",
+      at: 5.6, name: "Handys", ambience: "amb_nature", ambienceVolume: 0.35,
       render: (s) => (
         <Hometown shot={s} mood="dusk" cam={move([2.6, 1.75, 12.2], [2.1, 1.7, 11.1], [0.6, 1.5, 8.5], [0.7, 1.45, 8.5], 46)}
           actors={[
@@ -111,10 +111,10 @@ export const asteroid: Episode = {
           meteor={() => ({ elev: 20, size: 60, tail: 0 })} />
       ),
     },
-    { at: 8.4, name: "Asteroid nah + Everest", render: (s) => <SpaceScene shot={s} layout="close" /> },
+    { at: 8.4, name: "Asteroid nah + Everest", ambience: "tension", ambienceVolume: 0.6, render: (s) => <SpaceScene shot={s} layout="close" /> },
     // ── 2 Meilensteine ──
     {
-      at: 11.2, name: "Drohne über Viertel",
+      at: 11.2, name: "Drohne über Viertel", ambience: "amb_crowd", ambienceVolume: 0.45,
       render: (s) => (
         <Hometown shot={s} mood="dusk" cam={move([26, 24, 52], [20, 20, 42], [-2, 2, 4], [-2, 3, 4], 48)}
           actors={[
@@ -126,7 +126,7 @@ export const asteroid: Episode = {
       ),
     },
     {
-      at: 14.0, name: "Straße, alle schauen hoch",
+      at: 14.0, name: "Straße, alle schauen hoch", ambience: "amb_night",
       render: (s) => (
         <Hometown shot={s} mood="night" cam={move([2.2, 0.5, 22.5], [1.7, 0.6, 21.2], [-1.5, 5.5, 6], [-1.8, 6.2, 6], 52)}
           actors={[
@@ -136,14 +136,14 @@ export const asteroid: Episode = {
           meteor={(t) => ({ elev: 28, az: -0.3, size: 150 + (t - 14) * 15, tail: 260 })} />
       ),
     },
-    { at: 17.0, name: "Satelliten", render: (s) => <SpaceScene shot={s} layout="sats" /> },
-    { at: 19.8, name: "Wohnzimmer, Pizza", render: (s) => <Living shot={s} cam={move([1.7, 1.55, 2.4], [1.25, 1.5, 1.7], [-0.6, 1.45, -1.4], [-0.6, 1.5, -1.5], 50)} /> },
+    { at: 17.0, name: "Satelliten", ambience: "amb_space", render: (s) => <SpaceScene shot={s} layout="sats" /> },
+    { at: 19.8, name: "Wohnzimmer, Pizza", ambience: "amb_interior", ambienceVolume: 0.7, render: (s) => <Living shot={s} cam={move([1.7, 1.55, 2.4], [1.25, 1.5, 1.7], [-0.6, 1.45, -1.4], [-0.6, 1.5, -1.5], 50)} /> },
     // ── 3 Wissen ──
-    { at: 23.0, name: "Zoom-out Erde", render: (s) => <SpaceScene shot={s} layout="zoom" /> },
-    { at: 25.8, name: "ISS", render: (s) => <SpaceScene shot={s} layout="iss" /> },
-    { at: 28.6, name: "Eintritt", render: (s) => <SpaceScene shot={s} layout="entry" /> },
+    { at: 23.0, name: "Zoom-out Erde", ambience: "amb_space", render: (s) => <SpaceScene shot={s} layout="zoom" /> },
+    { at: 25.8, name: "ISS", ambience: "tension", ambienceVolume: 0.55, render: (s) => <SpaceScene shot={s} layout="iss" /> },
+    { at: 28.6, name: "Eintritt", ambience: "fire", ambienceVolume: 0.4, render: (s) => <SpaceScene shot={s} layout="entry" /> },
     {
-      at: 31.8, name: "Nacht wird Tag",
+      at: 31.8, name: "Nacht wird Tag", ambience: "amb_wind_strong", ambienceVolume: 0.5,
       render: (s) => (
         <Hometown shot={s} mood="entry" cam={move([7, 1.0, 26], [6, 1.1, 24.5], [-1, 7, 4], [-1.5, 8, 4], 54)}
           actors={[
@@ -154,15 +154,15 @@ export const asteroid: Episode = {
       ),
     },
     {
-      at: 33.6, name: "Über dem Meer", render: (s) => <OceanImpact shot={s} phase="incoming" cam={move([70, 7, 150], [64, 6.5, 136], [-12, 14, 0], [-6, 8, 0], 50)} />,
+      at: 33.6, name: "Über dem Meer", ambience: "amb_wind_strong", ambienceVolume: 0.6, render: (s) => <OceanImpact shot={s} phase="incoming" cam={move([70, 7, 150], [64, 6.5, 136], [-12, 14, 0], [-6, 8, 0], 50)} />,
     },
     // ── 4 Extrem ──
     {
-      at: IMPACT, transition: "flash", name: "Einschlag",
+      at: IMPACT, transition: "flash", name: "Einschlag", ambience: "fire", ambienceVolume: 0.45,
       render: (s) => <OceanImpact shot={s} phase="impact" cam={move([120, 14, 380], [140, 18, 450], [0, 95, 0], [0, 130, 0], 50)} />,
     },
     {
-      at: 38.0, name: "Zweiter Sonnenaufgang",
+      at: 38.0, name: "Zweiter Sonnenaufgang", ambience: "amb_wind", ambienceVolume: 0.45,
       render: (s) => (
         <Hometown shot={s} mood="glow" cam={move([3.4, 1.2, 23], [2.8, 1.3, 21.4], [-5, 6, 2], [-5, 6.8, 2], 52)}
           actors={[
@@ -171,9 +171,9 @@ export const asteroid: Episode = {
           ]} />
       ),
     },
-    { at: 41.0, name: "Krater von oben", transition: "dip", render: (s) => <SpaceScene shot={s} layout="scar" /> },
+    { at: 41.0, name: "Krater von oben", ambience: "amb_space", transition: "dip", render: (s) => <SpaceScene shot={s} layout="scar" /> },
     {
-      at: 44.0, name: "Erdbeben",
+      at: 44.0, name: "Erdbeben", ambience: "amb_wind", ambienceVolume: 0.3,
       render: (s) => (
         <Hometown shot={s} mood="quake" shakeAmp={0.18} cam={move([5.5, 1.7, 22], [4.8, 1.6, 21], [-0.6, 2.6, 10], [-0.6, 2.4, 10], 52)}
           actors={[
@@ -183,7 +183,7 @@ export const asteroid: Episode = {
       ),
     },
     {
-      at: 47.0, name: "Feuerregen",
+      at: 47.0, name: "Feuerregen", ambience: "fire", ambienceVolume: 0.45,
       render: (s) => (
         <Hometown shot={s} mood="fire" cam={({ t }) => {
           const mx = 7 - (t - 47) * 3.2;
@@ -193,7 +193,7 @@ export const asteroid: Episode = {
       ),
     },
     {
-      at: 50.2, name: "Druckwelle",
+      at: 50.2, name: "Druckwelle", ambience: "amb_wind_strong", ambienceVolume: 0.75,
       render: (s) => (
         <Hometown shot={s} mood="blast" shakeAmp={0.08} wall={(l) => clamp(l / 3.0)} cam={move([4.2, 1.3, 19.6], [3.8, 1.25, 18.8], [0, 2.2, 8], [0, 2.6, 8], 52)}
           actors={[{ kind: "max", pos: [1.1, 0, 13.6], rotY: Math.PI + 0.3, pose: "brace", expr: "shock" }]} />
@@ -201,14 +201,14 @@ export const asteroid: Episode = {
     },
     // ── 5 Payoff ──
     {
-      at: 53.4, name: "Asche",
+      at: 53.4, name: "Asche", ambience: "amb_wind", ambienceVolume: 0.35,
       render: (s) => (
         <Hometown shot={s} mood="ash" cam={move([6, 2.2, 23], [8, 6.5, 28], [0, 1.4, 13], [0, 1.2, 12], 48)}
           actors={[{ kind: "max", pos: [0.6, 0, 14.4], rotY: 0.35, pose: "idle", expr: "shock" }]} />
       ),
     },
     {
-      at: 56.6, name: "Es klingelt",
+      at: 56.6, name: "Es klingelt", ambience: "amb_wind", ambienceVolume: 0.25,
       render: (s) => (
         <Hometown shot={s} mood="ash" door={(t) => clamp((t - 57.4) / 0.6)} cam={move([5.2, 1.8, 10], [4.4, 1.7, 9], [0, 1.4, 4.6], [0, 1.4, 4.6], 46)}
           actors={[
@@ -218,7 +218,7 @@ export const asteroid: Episode = {
       ),
     },
     {
-      at: 59.6, name: "Pizzabote",
+      at: 59.6, name: "Pizzabote", ambience: "amb_wind", ambienceVolume: 0.2,
       render: (s) => (
         <Hometown shot={s} mood="ash" door={() => 1} cam={move([0.45, 1.5, 3.66], [0.4, 1.52, 3.8], [0.08, 1.47, 6.0], [0.1, 1.49, 6.0], 50)}
           actors={[
@@ -227,6 +227,52 @@ export const asteroid: Episode = {
           ]} />
       ),
     },
+  ],
+
+  // ── Sound-Design (Automatik: Atmos, Übergänge, Meilensteine, Untertitel – siehe src/audio/sfx.ts) ──
+  sfx: [
+    { at: 0.2, sound: "fire", volume: 0.12, dur: 2.8, fadeIn: 0.3, fadeOut: 0.3 }, // Grill
+    { at: 3.0, sound: "rumble", volume: 0.3, rate: 0.8 },
+    // alle Handys piepen
+    { at: 5.75, sound: "alarm", volume: 0.42 },
+    { at: 5.9, sound: "alarm", volume: 0.3, rate: 1.19 },
+    { at: 6.05, sound: "alarm", volume: 0.25, rate: 0.89 },
+    { at: 8.4, sound: "rumble", volume: 0.45, rate: 0.7 },
+    { at: 8.5, sound: "whoosh_long", volume: 0.4, rate: 0.7 },
+    { at: 16.2, sound: "swoosh_up", volume: 0.35 },
+    { at: 18.0, sound: "glitch", volume: 0.35 },
+    // Pizza bestellen
+    { at: 20.3, sound: "button", volume: 0.45, rate: 1.3 },
+    { at: 20.6, sound: "button", volume: 0.45, rate: 1.2 },
+    { at: 20.85, sound: "button", volume: 0.45, rate: 1.35 },
+    { at: 21.4, sound: "pop", volume: 0.5, rate: 0.8 },
+    { at: 23.0, sound: "whoosh_long", volume: 0.45, rate: 0.85 },
+    { at: 28.6, sound: "boom", volume: 0.2, rate: 1.4 },
+    { at: 30.0, sound: "riser_long", volume: 0.5 },
+    { at: 31.8, sound: "rumble", volume: 0.5 },
+    { at: 33.6, sound: "plane", volume: 0.35, rate: 0.6 },
+    // Einschlag
+    { at: IMPACT, sound: "boom", volume: 0.42, rate: 0.85 },
+    { at: IMPACT + 0.05, sound: "sub_drop", volume: 0.25 },
+    { at: IMPACT + 0.6, sound: "rumble", volume: 0.5, rate: 0.75 },
+    { at: 38.2, sound: "boom", volume: 0.25, rate: 0.6 }, // entfernter Donner
+    // Erdbeben
+    { at: 44.0, sound: "rumble", volume: 0.6, rate: 0.9 },
+    { at: 44.4, sound: "rumble", volume: 0.5, rate: 0.7 },
+    { at: 44.9, sound: "glass_crack", volume: 0.45 },
+    { at: 45.3, sound: "thud", volume: 0.45 },
+    // Gesteinsregen
+    ...[47.3, 47.9, 48.4, 49.0, 49.5, 49.9].map((at, i) => ({ at, sound: "thud" as const, volume: 0.32, rate: [1, 0.85, 1.15, 0.9, 1.05, 0.8][i] })),
+    ...[47.0, 47.35, 47.7, 48.05, 48.4, 48.75, 49.1, 49.45, 49.8].map((at, i) => ({ at, sound: "step" as const, volume: 0.35, rate: i % 2 ? 0.95 : 1.1 })),
+    // Druckwelle
+    { at: 50.2, sound: "whoosh_long", volume: 0.5, rate: 0.6 },
+    { at: 50.6, sound: "boom", volume: 0.4, rate: 0.8 },
+    { at: 50.7, sound: "rumble", volume: 0.45 },
+    { at: 51.4, sound: "glass_crack", volume: 0.4, rate: 0.85 },
+    // Pointe: Türklingel
+    { at: 57.0, sound: "chime", volume: 0.55 },
+    { at: 57.4, sound: "door", volume: 0.35, rate: 0.9 },
+    ...[57.75, 58.15].map((at, i) => ({ at, sound: "step" as const, volume: 0.3, rate: i ? 0.95 : 1.05 })),
   ],
 
   upload: {

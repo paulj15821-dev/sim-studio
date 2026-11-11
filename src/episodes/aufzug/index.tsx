@@ -76,36 +76,36 @@ export const aufzug: Episode = {
   shots: [
     // ── Alltag ──
     {
-      at: 0, name: "Straße, Aufzug fährt an",
+      at: 0, name: "Straße, Aufzug fährt an", ambience: "amb_city",
       render: (s) => (
         <ElevatorWorld shot={s} mode="low"
           cam={({ p, h }) => ({ pos: keys3([{ t: 0, v: [9, 1.6 - h, 17] }, { t: 1, v: [7, 1.6 - h, 13.5] }], p), look: [0, 1.3, 0], fov: 50 })}
           pose={(t) => (t < 1.3 ? "press" : "idle")} maxRotY={(t) => (t < 1.3 ? Math.PI : t < 1.7 ? Math.PI * (1 - (t - 1.3) / 0.4) : 0)} />
       ),
     },
-    { at: 3.2, name: "Innen, Display", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([-1.0, 1.2, 1.08], [-0.9, 1.3, 0.98], [0.45, 1.65, -0.9], [0.4, 1.7, -1.0], 66)} pose="idle" /> },
+    { at: 3.2, name: "Innen, Display", ambience: "muzak", ambienceVolume: 0.45, render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([-1.0, 1.2, 1.08], [-0.9, 1.3, 0.98], [0.45, 1.65, -0.9], [0.4, 1.7, -1.0], 66)} pose="idle" /> },
     {
-      at: 6.0, name: "Leute schauen hoch",
+      at: 6.0, name: "Leute schauen hoch", ambience: "amb_crowd",
       render: (s) => <ElevatorWorld shot={s} mode="low" cam={({ p, h }) => ({ pos: keys3([{ t: 0, v: [6, 1.5 - h, 24] }, { t: 1, v: [4, 1.5 - h, 22] }], p), look: [0, 1, 0], fov: 50 })} pose="lookUp" />,
     },
     // ── Bekannte Meilensteine ──
     {
-      at: 8.5, name: "Dachkante",
+      at: 8.5, name: "Dachkante", ambience: "amb_wind",
       render: (s) => <ElevatorWorld shot={s} mode="low" cam={({ h, p }) => ({ pos: [4.5 + p * 0.6, 62 - h, 1.6 + p * 0.4], look: [0, 1.4, 0], fov: 58 })} pose="lookUp" expression="shock" />,
     },
-    { at: 11.5, name: "Drohne über Stadt", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([22, -10, 28], [27, -5, 35], [0, -25, 0], [0, -35, 0])} pose="shock" expression="shock" /> },
-    { at: 14.5, name: "Eiffelturm-Höhe", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([8, 3, 11], [9, 5, 13], [0, -6, 0])} pose="lookUp" /> },
-    { at: 17.0, name: "Seitlich, Streaks", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([3.6, 1.3, 4.6], [3.2, 1.2, 4.0], [0, 1.5, 0], undefined, 40)} pose="shock" expression="shock" /> },
-    { at: 18.85, transition: "flash", name: "Schallmauer", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([-3, -4, 4.5], [-3.4, -4.6, 5.2], [0, 2, 0], undefined, 50)} pose="shock" expression="shock" /> },
-    { at: 20.6, name: "Wolken", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([4, -1, 7], [4.5, -0.5, 7.5], [0, 1.4, 0])} pose="lookUp" /> },
-    { at: 23.0, name: "Über den Wolken", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([5, 10, 8], [6, 11, 9.5], [0, -6, 0])} pose="idle" /> },
-    { at: 25.6, name: "Flugzeug", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([3, 10, 4], [3.2, 10.5, 4.3], [0, -60, 0], undefined, 52)} pose="wave" expression="happy" /> },
+    { at: 11.5, name: "Drohne über Stadt", ambience: "amb_wind", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([22, -10, 28], [27, -5, 35], [0, -25, 0], [0, -35, 0])} pose="shock" expression="shock" /> },
+    { at: 14.5, name: "Eiffelturm-Höhe", ambience: "amb_wind", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([8, 3, 11], [9, 5, 13], [0, -6, 0])} pose="lookUp" /> },
+    { at: 17.0, name: "Seitlich, Streaks", ambience: "amb_wind_strong", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([3.6, 1.3, 4.6], [3.2, 1.2, 4.0], [0, 1.5, 0], undefined, 40)} pose="shock" expression="shock" /> },
+    { at: 18.85, transition: "flash", name: "Schallmauer", ambience: "amb_wind_strong", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([-3, -4, 4.5], [-3.4, -4.6, 5.2], [0, 2, 0], undefined, 50)} pose="shock" expression="shock" /> },
+    { at: 20.6, name: "Wolken", ambience: "amb_wind_strong", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([4, -1, 7], [4.5, -0.5, 7.5], [0, 1.4, 0])} pose="lookUp" /> },
+    { at: 23.0, name: "Über den Wolken", ambience: "amb_wind", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([5, 10, 8], [6, 11, 9.5], [0, -6, 0])} pose="idle" /> },
+    { at: 25.6, name: "Flugzeug", ambience: "amb_wind", render: (s) => <ElevatorWorld shot={s} mode="low" cam={move([3, 10, 4], [3.2, 10.5, 4.3], [0, -60, 0], undefined, 52)} pose="wave" expression="happy" /> },
     // ── Wissen / Staunen ──
-    { at: 27.0, name: "Plasma", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([4.5, 1.2, 5.5], [5.2, 1.0, 6.4], [0, 1.6, 0])} pose="shock" expression="shock" /> },
-    { at: 29.6, name: "Schwarzer Himmel", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([14, -3, 18], [18, -2, 24], [0, -4, 0], undefined, 40)} pose="lookUp" /> },
-    { at: 32.6, name: "Blick durch Glasboden", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([0.9, 2.3, 0.95], [0.8, 2.35, 0.85], [-0.2, -3, -0.2], undefined, 55)} pose="shock" expression="shock" /> },
+    { at: 27.0, name: "Plasma", ambience: "fire", ambienceVolume: 0.35, render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([4.5, 1.2, 5.5], [5.2, 1.0, 6.4], [0, 1.6, 0])} pose="shock" expression="shock" /> },
+    { at: 29.6, name: "Schwarzer Himmel", ambience: "amb_space", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([14, -3, 18], [18, -2, 24], [0, -4, 0], undefined, 40)} pose="lookUp" /> },
+    { at: 32.6, name: "Blick durch Glasboden", ambience: "amb_space", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([0.9, 2.3, 0.95], [0.8, 2.35, 0.85], [-0.2, -3, -0.2], undefined, 55)} pose="shock" expression="shock" /> },
     {
-      at: 36.0, name: "Weit: ISS-Bahn", transition: "dip",
+      at: 36.0, name: "Weit: ISS-Bahn", ambience: "amb_space", transition: "dip",
       render: (s) => (
         <ElevatorWorld shot={s} mode="high" marker rings
           cam={({ h, p }) => {
@@ -114,17 +114,17 @@ export const aufzug: Episode = {
           }} />
       ),
     },
-    { at: 39.5, name: "Erde unter ihm", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([2.5, 6, 3.5], [2.9, 6.6, 4.1], [0, -2, 0], [0, -2.5, 0])} pose="idle" /> },
+    { at: 39.5, name: "Erde unter ihm", ambience: "amb_space", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([2.5, 6, 3.5], [2.9, 6.6, 4.1], [0, -2, 0], [0, -2.5, 0])} pose="idle" /> },
     // ── Extrem ──
     {
-      at: 43.0, name: "Fahrstuhlmusik",
+      at: 43.0, name: "Fahrstuhlmusik", ambience: "muzak", ambienceVolume: 0.5,
       render: (s) => (
         <ElevatorWorld shot={s} mode="high" cam={move([-1.0, 1.2, 1.08], [-0.92, 1.28, 1.0], [0.45, 1.65, -0.9], [0.4, 1.7, -1.0], 66)}
           pose={(t) => (t < 44.9 ? "idle" : "press")} maxRotY={(t) => (t < 44.6 ? 0 : t < 44.9 ? Math.PI * ((t - 44.6) / 0.3) : Math.PI)} />
       ),
     },
     {
-      at: 46.5, name: "Weit: Satelliten", transition: "dip",
+      at: 46.5, name: "Weit: Satelliten", ambience: "amb_space", transition: "dip",
       render: (s) => (
         <ElevatorWorld shot={s} mode="high" marker rings
           cam={({ h, p }) => {
@@ -133,9 +133,9 @@ export const aufzug: Episode = {
           }} />
       ),
     },
-    { at: 51.0, name: "Erde als Murmel", render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([1.5, 6, 2.5], [1.8, 6.6, 3.0], [0, -3, 0], [0, -3.4, 0])} pose="idle" expression="shock" /> },
+    { at: 51.0, name: "Erde als Murmel", ambience: "tension", ambienceVolume: 0.6, render: (s) => <ElevatorWorld shot={s} mode="high" cam={move([1.5, 6, 2.5], [1.8, 6.6, 3.0], [0, -3, 0], [0, -3.4, 0])} pose="idle" expression="shock" /> },
     {
-      at: 54.0, name: "Mond kommt",
+      at: 54.0, name: "Mond kommt", ambience: "tension", ambienceVolume: 0.7,
       // Tele-Zoom: der Mond ist real nur ~1–4° groß → fov fährt von 34° auf 9° zu
       render: (s) => (
         <ElevatorWorld shot={s} mode="high" pose="lookUp" expression="shock"
@@ -143,7 +143,32 @@ export const aufzug: Episode = {
       ),
     },
     // ── Payoff ──
-    { at: ARRIVE, transition: "flash", name: "Mond", render: (s) => <MoonLanding shot={s} /> },
+    { at: ARRIVE, transition: "flash", name: "Mond", ambience: "amb_space", ambienceVolume: 0.3, render: (s) => <MoonLanding shot={s} /> },
+  ],
+
+  // ── Sound-Design (Automatik: Atmos, Übergänge, Ticks, Meilensteine, Untertitel – siehe src/audio/sfx.ts) ──
+  sfx: [
+    { at: 0.55, sound: "button", volume: 0.8 },
+    { at: 1.2, sound: "rumble", volume: 0.3 },
+    { at: 16.2, sound: "riser", volume: 0.55 },
+    { at: 18.85, sound: "sonic_boom", volume: 0.55 },
+    { at: 20.6, sound: "whoosh_long", volume: 0.5 },
+    { at: 25.3, sound: "plane", volume: 0.65 },
+    { at: 26.8, sound: "swoosh_up", volume: 0.5 },
+    { at: 27.05, sound: "boom", volume: 0.22, rate: 1.2 },
+    { at: 29.6, sound: "sub_drop", volume: 0.35 },
+    { at: 33.75, sound: "heartbeat", volume: 0.6 },
+    { at: 34.75, sound: "heartbeat", volume: 0.55 },
+    { at: 35.7, sound: "heartbeat", volume: 0.5 },
+    { at: 44.95, sound: "button", volume: 0.9 },
+    { at: 45.25, sound: "button", volume: 0.7, rate: 1.1 },
+    { at: 50.9, sound: "riser_long", volume: 0.45 },
+    { at: ARRIVE, sound: "thud", volume: 0.35 },
+    { at: ARRIVE, sound: "boom", volume: 0.2 },
+    { at: 56.25, sound: "chime", volume: 0.5 },
+    { at: 56.7, sound: "door", volume: 0.45 },
+    ...[57.75, 58.17, 58.59, 59.01, 59.43, 59.85].map((at, i) => ({ at, sound: "step" as const, volume: 0.45, rate: i % 2 ? 0.92 : 1.05 })),
+    { at: 58.2, sound: "muzak", volume: 0.35, dur: 3.8, fadeIn: 0.6, fadeOut: 0.3 },
   ],
 
   upload: {

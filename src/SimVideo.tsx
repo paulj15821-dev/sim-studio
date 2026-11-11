@@ -4,6 +4,7 @@ import type { Episode } from "./types";
 import { Hook, Captions } from "./overlay/Text";
 import { Hud } from "./overlay/Hud";
 import { Grade, TransitionFx } from "./overlay/Grade";
+import { SoundLayer } from "./audio/SoundLayer";
 
 /** Setzt eine Episode zusammen: aktiver Shot → Grading → HUD → Untertitel → Hook. */
 export const SimVideo: React.FC<{ episode: Episode }> = ({ episode }) => {
@@ -37,6 +38,7 @@ export const SimVideo: React.FC<{ episode: Episode }> = ({ episode }) => {
       {episode.hud && (Array.isArray(episode.hud) ? episode.hud : [episode.hud]).map((h, k) => <Hud key={k} hud={h} />)}
       <Captions captions={episode.captions} duration={episode.duration} />
       <Hook hook={episode.hook} />
+      <SoundLayer episode={episode} />
       {episode.music && <Audio src={staticFile(episode.music.src)} volume={episode.music.volume ?? 0.8} />}
     </AbsoluteFill>
   );
