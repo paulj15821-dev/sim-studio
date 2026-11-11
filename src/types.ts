@@ -10,6 +10,8 @@ export type HudSpec = {
   format: (v: number) => string;
   /** Vergleichszeilen: die letzte erreichte wird angezeigt. `at` = Wert (nicht Zeit). */
   compare?: { at: number; text: string }[];
+  /** "down" = Wert fällt (Countdown, Abstand): angezeigt wird die zuletzt unterschrittene Schwelle. Standard "up". */
+  compareDir?: "up" | "down";
   /** Pille mit Countdown bis zur nächsten Verdopplung */
   pill?: { every: number; text: (secondsLeft: string) => string; startAt?: number; stopAt?: number };
   /** Zweite, kleine Kennzahl unter der Pille (z. B. Tempo) */
@@ -50,7 +52,8 @@ export type Episode = {
   title: string; // für Upload-Text
   duration: number; // Sekunden (61–65 empfohlen)
   hook: { text: string; highlight?: string[]; until?: number };
-  hud?: HudSpec;
+  /** Ein HUD oder mehrere nacheinander (mit from/until, z. B. Countdown → Zeit danach) */
+  hud?: HudSpec | HudSpec[];
   captions: Caption[];
   shots: Shot[];
   /** Optional: Musik-/SFX-Datei in public/, z. B. "music/epic.mp3" */

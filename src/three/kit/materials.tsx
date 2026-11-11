@@ -33,6 +33,7 @@ export const Glow: React.FC<{ color: string; opacity?: number; additive?: boolea
     blending={additive ? THREE.AdditiveBlending : THREE.NormalBlending}
     toneMapped={false}
     side={side}
+    fog={false}
   />
 );
 

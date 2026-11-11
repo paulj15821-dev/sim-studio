@@ -26,7 +26,11 @@ export const Hud: React.FC<{ hud: HudSpec }> = ({ hud }) => {
   const fadeIn = interpolate(t, [hud.from ?? 0, (hud.from ?? 0) + 0.25], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   const v = hud.value(t);
-  const cmp = hud.compare ? [...hud.compare].sort((a, b) => a.at - b.at).filter((c) => Math.abs(v) >= c.at).pop() : undefined;
+  const cmp = !hud.compare
+    ? undefined
+    : hud.compareDir === "down"
+      ? [...hud.compare].sort((a, b) => b.at - a.at).filter((c) => Math.abs(v) <= c.at).pop()
+      : [...hud.compare].sort((a, b) => a.at - b.at).filter((c) => Math.abs(v) >= c.at).pop();
 
   let pillText: string | null = null;
   if (hud.pill && t >= (hud.pill.startAt ?? 0) && t <= (hud.pill.stopAt ?? Infinity)) {
