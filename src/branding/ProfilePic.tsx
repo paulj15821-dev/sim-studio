@@ -10,7 +10,7 @@ import { Stage, Camera, Max, Stars, Earth, SunGlow, SkyDome } from "../three/kit
 import { COLOR, FONT } from "../style/theme";
 
 /** 3D-Fragezeichen mit Fase, zentriert */
-const QuestionMark: React.FC<{ position: [number, number, number]; rotation?: [number, number, number]; size?: number; glow?: number }> = ({
+export const QuestionMark: React.FC<{ position: [number, number, number]; rotation?: [number, number, number]; size?: number; glow?: number }> = ({
   position, rotation = [0, 0, 0], size = 1, glow = 1.2,
 }) => {
   const geo = useMemo(() => {

@@ -186,19 +186,19 @@ function moonTexture(seed: number) {
     const u = r.range(-1, 1), th = r.range(0, Math.PI * 2), s = Math.sqrt(1 - u * u);
     return { d: [Math.cos(th) * s, u, Math.sin(th) * s], rad: Math.pow(r.next(), 3) * 0.22 + 0.015 };
   });
-  const light = hex("#BDB8AE"), dark = hex("#6E6C68"), mare = hex("#57575A");
+  const light = hex("#C4C0B8"), dark = hex("#9A968F"), mare = hex("#6F6E6D");
   const c = equirect(1024, 512, (x, y, z) => {
     const n = fbm3(x * 2.2, y * 2.2, z * 2.2, seed, 5);
     const d = fbm3(x * 14, y * 14, z * 14, seed + 4, 3);
-    let col = mix(light, dark, sstep(0.35, 0.7, d));
-    col = mix(col, mare, sstep(0.52, 0.6, n) * 0.85); // dunkle „Meere“
+    let col = mix(light, dark, sstep(0.3, 0.8, d) * 0.7);
+    col = mix(col, mare, sstep(0.5, 0.64, n) * 0.75); // dunkle „Meere“ (weiche Ränder)
     let shade = 0;
     for (const cr of craters) {
       const dot = x * cr.d[0] + y * cr.d[1] + z * cr.d[2];
       const ang = Math.acos(Math.min(1, dot));
       if (ang > cr.rad * 1.3) continue;
       const q = ang / cr.rad;
-      shade += q < 0.85 ? -0.12 * (1 - q) : q < 1.1 ? 0.22 : 0; // Mulde + heller Rand
+      shade += q < 0.85 ? -0.07 * (1 - q) : q < 1.1 ? 0.12 : 0; // Mulde + heller Rand
     }
     col = [col[0] * (1 + shade), col[1] * (1 + shade), col[2] * (1 + shade)];
     return [Math.min(255, col[0]), Math.min(255, col[1]), Math.min(255, col[2]), 255];
