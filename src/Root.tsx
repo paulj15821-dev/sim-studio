@@ -1,5 +1,6 @@
 import React from "react";
-import { Composition } from "remotion";
+import { Composition, Still } from "remotion";
+import { ProfilePic, type ProfileVariant } from "./branding/ProfilePic";
 import { EPISODES } from "./episodes";
 import { SimVideo } from "./SimVideo";
 import { VIDEO } from "./style/theme";
@@ -29,6 +30,10 @@ export const Root: React.FC = () => (
         width={VIDEO.width}
         height={VIDEO.height}
       />
+    ))}
+    {/* Kanal-Branding (Standbilder, 1080×1080) */}
+    {(["orbit", "studio", "schrift"] as ProfileVariant[]).map((v) => (
+      <Still key={v} id={`Profilbild-${v}`} component={ProfilePic} defaultProps={{ variant: v }} width={1080} height={1080} />
     ))}
   </>
 );
