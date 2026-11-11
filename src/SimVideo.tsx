@@ -34,7 +34,7 @@ export const SimVideo: React.FC<{ episode: Episode }> = ({ episode }) => {
           <TransitionFx key={k} at={Math.round(s.at * fps)} kind={s.transition} />
         ) : null
       )}
-      {episode.hud && <Hud hud={episode.hud} />}
+      {episode.hud && (Array.isArray(episode.hud) ? episode.hud : [episode.hud]).map((h, k) => <Hud key={k} hud={h} />)}
       <Captions captions={episode.captions} duration={episode.duration} />
       <Hook hook={episode.hook} />
       {episode.music && <Audio src={staticFile(episode.music.src)} volume={episode.music.volume ?? 0.8} />}

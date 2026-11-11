@@ -6,7 +6,7 @@ import type { Vec3 } from "../../lib/anim";
 
 export type Pose =
   | "idle" | "walk" | "run" | "wave" | "lookUp" | "press" | "sit"
-  | "fall" | "shock" | "dig" | "swim" | "float" | "cheer" | "point";
+  | "fall" | "shock" | "dig" | "swim" | "float" | "cheer" | "point" | "phone" | "carry" | "brace";
 
 export type Outfit = { skin: string; hair?: string; hat?: string; top: string; pants: string; shoes: string; eyes?: string };
 
@@ -64,6 +64,15 @@ function poseJoints(pose: Pose, time: number, speed: number): Joints {
     case "point":
       j.rArmX = -1.5; j.rArmZ = -0.1; j.headY = -0.1;
       break;
+    case "phone": // Handy vor dem Gesicht, Blick nach unten
+      j.rArmX = -1.25; j.rArmZ = 0.25; j.lArmX = -0.9; j.lArmZ = -0.2; j.headX = 0.35 + Math.sin(ph * 0.35) * 0.03;
+      break;
+    case "carry": // etwas mit beiden Händen vor dem Bauch tragen
+      j.lArmX = -1.0; j.rArmX = -1.0; j.lArmZ = 0.05; j.rArmZ = -0.05; j.bob = Math.sin(ph * 0.35) * 0.01;
+      break;
+    case "brace": // gegen Wind/Druckwelle stemmen
+      j.bodyX = 0.35; j.lHip = 0.45; j.rHip = -0.35; j.lArmX = -1.4 + s * 0.12; j.rArmX = -1.5 - s * 0.12; j.lArmZ = 0.4; j.rArmZ = -0.4; j.headX = 0.2;
+      break;
   }
   return j;
 }
@@ -82,7 +91,9 @@ export const Character: React.FC<{
   rotation?: Vec3;
   scale?: number;
   expression?: "neutral" | "happy" | "shock";
-}> = ({ outfit = MAX_OUTFIT, pose = "idle", time = 0, speed = 1.1, position = [0, 0, 0], rotationY = 0, rotation, scale = 1, expression = "neutral" }) => {
+  /** Gegenstand: "phone" in der rechten Hand (passt zu pose "phone"), "pizza" = Karton vor dem Bauch (pose "carry") */
+  hold?: "phone" | "pizza";
+}> = ({ outfit = MAX_OUTFIT, pose = "idle", time = 0, speed = 1.1, position = [0, 0, 0], rotationY = 0, rotation, scale = 1, expression = "neutral", hold }) => {
   const j = poseJoints(pose, time, speed);
   const o = outfit;
   const eyeH = expression === "shock" ? 0.085 : 0.06;
@@ -104,8 +115,20 @@ export const Character: React.FC<{
             <group key={side} position={[side * 0.33, 0.56, 0]} rotation={[side < 0 ? j.lArmX : j.rArmX, 0, -(side < 0 ? j.lArmZ : j.rArmZ)]}>
               <Box size={[0.15, 0.56, 0.18]} color={o.top} position={[0, -0.27, 0]} />
               <Box size={[0.13, 0.11, 0.15]} color={o.skin} position={[0, -0.6, 0]} />
+              {hold === "phone" && side > 0 && (
+                <group position={[0.0, -0.7, 0.07]} rotation={[-0.3, 0, 0]}>
+                  <Box size={[0.09, 0.17, 0.03]} color="#1E2228" cast={false} roughness={0.35} />
+                  <Box size={[0.075, 0.15, 0.005]} color="#BDEFFF" emissive="#8FE3FF" position={[0, 0, 0.017]} cast={false} bevel={0} />
+                </group>
+              )}
             </group>
           ))}
+          {hold === "pizza" && (
+            <group position={[0, 0.05, 0.5]}>
+              <Box size={[0.48, 0.07, 0.48]} color="#D9B98A" roughness={0.9} />
+              <Box size={[0.22, 0.005, 0.16]} color="#C8402F" position={[0, 0.038, 0]} cast={false} bevel={0} />
+            </group>
+          )}
           {/* Kopf */}
           <group position={[0, 0.66, 0]} rotation={[j.headX, j.headY, 0]}>
             <Box size={[0.36, 0.36, 0.34]} color={o.skin} position={[0, 0.18, 0]} />
