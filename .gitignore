@@ -1,2 +1,4 @@
 node_modules/
 out/
+# Sounds werden bei npm install erzeugt (npm run make-sfx)
+public/sfx/

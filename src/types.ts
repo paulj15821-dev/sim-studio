@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Ambience, SfxCue } from "./audio/sfx";
 
 /** Eine HUD-Anzeige (links). Mehrere Zeilen möglich (z. B. Höhe + Tempo). */
 export type HudSpec = {
@@ -43,6 +44,12 @@ export type Shot = {
   transition?: Transition;
   /** Name für Logs/Vorschau */
   name?: string;
+  /** Hintergrund-Atmosphäre dieses Shots (Standard: episode.sound.ambience). "none" = Stille */
+  ambience?: Ambience | "none";
+  /** Lautstärke der Atmo 0..1 (Standard 0.55) */
+  ambienceVolume?: number;
+  /** Kein automatischer Whoosh auf diesem Schnitt */
+  silentCut?: boolean;
 };
 
 export type Episode = {
@@ -53,8 +60,12 @@ export type Episode = {
   hud?: HudSpec;
   captions: Caption[];
   shots: Shot[];
-  /** Optional: Musik-/SFX-Datei in public/, z. B. "music/epic.mp3" */
+  /** Optional: Musik-Datei in public/, z. B. "music/epic.mp3" (normalerweise fügt der Nutzer Musik selbst hinzu) */
   music?: { src: string; volume?: number };
+  /** Gezielte Soundeffekte (Knall, Tür, Flugzeug …). Automatische Sounds siehe src/audio/sfx.ts */
+  sfx?: SfxCue[];
+  /** Sound-Grundeinstellungen: Standard-Atmo + automatische Ebenen an/aus, Gesamtlautstärke */
+  sound?: { ambience?: Ambience | "none"; cuts?: boolean; captions?: boolean; ticks?: boolean; milestones?: boolean; volume?: number };
   /** Upload-Infos (werden von /video mit ausgegeben) */
   upload?: { caption: string; hashtags: string[] };
 };
