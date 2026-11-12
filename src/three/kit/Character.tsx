@@ -180,6 +180,10 @@ export const Character: React.FC<{
               </>
             )}
             {hairLong > 0.001 && <Box size={[0.38, 0.22 + hairLong, 0.2]} color={hc} position={[0, 0.28 - hairLong / 2, -0.09]} cast={false} />}
+            {/* Seitliche Strähnen – macht lange Haare auch von vorn erkennbar */}
+            {hairLong > 0.1 && ([-1, 1] as const).map((sd) => (
+              <Box key={sd} size={[0.06, 0.16 + hairLong * 0.75, 0.24]} color={hc} position={[sd * 0.2, 0.29 - hairLong * 0.37, -0.03]} cast={false} />
+            ))}
             {expression === "shock" && <Box size={[0.07, 0.07, 0.02]} color="#5A2A2A" position={[0, 0.09, 0.175]} cast={false} />}
             {expression === "happy" && <Box size={[0.12, 0.03, 0.02]} color="#5A2A2A" position={[0, 0.1, 0.175]} cast={false} />}
             {o.hat ? (

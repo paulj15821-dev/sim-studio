@@ -244,6 +244,10 @@ S.amb_hospital = () => {
 S.bonk = () => { const len = 0.9; const w = mix(len, [thump(len, 520, 150, 0.12), 1.1], [fm(0.6, 330, 1.48, 2.2, 0.16, 0.05), 0.6], [click(len, 1800, 0.004), 0.5], [env(osc(len, (t) => 900 * Math.exp(-t / 0.08) + 240, "tri"), expDec(0.1)), 0.35]); return normPeak(reverb(st(sat(w, 1.4)), 0.35, 0.2, 0.5, 0.4), -1.5); };
 S.crunch = () => { const len = 1.3; const w = mix(len, [svf(crackle(len, 900, 0.003), 2200, 0.8, "bp"), 2.2], [env(svf(brown(len), 400, 0.7, "lp"), (t) => Math.min(1, t / 0.01) * Math.exp(-t / 0.3)), 1.4], [thump(len, 120, 50, 0.15), 0.8]); env(w, (t) => Math.exp(-t / 0.5)); return normPeak(reverb(wide(w), 0.5, 0.3, 0.5, 0.6), -1.5); };
 
+// Episode Männer: Gefängnistür (Metall-Klonk) + Baby-Gluckser
+S.clank = () => { const len = 1.6; const w = mix(len, [fm(1.4, 180, 2.76, 3.5, 0.35, 0.08), 0.8], [fm(1.4, 410, 1.41, 2.2, 0.25, 0.05), 0.5], [thump(0.5, 120, 55, 0.09), 1.0], [click(0.2, 3500, 0.003), 0.6]); return normPeak(reverb(st(sat(w, 1.3)), 0.75, 0.4, 0.4, 1.3), -1.5); };
+S.baby = () => { const len = 1.1; const f0 = (t, p) => 430 + 120 * Math.sin(Math.PI * Math.min(1, p * 1.6)) - 90 * p + 14 * Math.sin(t * 2 * Math.PI * 7); const src = osc(len, f0, "saw"); const a = svf(src, (t, p) => 900 + 500 * Math.sin(Math.PI * p), 4, "bp"); const b = svf(src, (t, p) => 2600 - 600 * p, 5, "bp"); const w = mix(len, [a, 1.4], [b, 0.6]); env(w, (t, p) => Math.min(1, t / 0.06) * Math.pow(Math.sin(Math.PI * Math.min(1, p * 1.05)), 0.6)); return normPeak(reverb(st(w), 0.4, 0.25, 0.5, 0.5), -3); };
+
 // ───────────── Erzeugen ─────────────
 const only = process.argv.slice(2);
 console.log("Erzeuge Sounds nach public/sfx …");

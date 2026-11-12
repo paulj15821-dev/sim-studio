@@ -13,7 +13,7 @@ export const SFX = [
   "tick", "tick_low", "pop", "ding", "chime", "button", "alarm", "glitch", "camera",
   // Objekte / Bewegung
   "door", "step", "plane", "car_pass", "splash", "heartbeat", "zap", "shrink", "grow",
-  "buzz", "horn", "screech", "siren", "siren_wail", "beep", "typing", "msg_send", "msg_in", "bonk", "crunch",
+  "buzz", "horn", "screech", "siren", "siren_wail", "beep", "typing", "msg_send", "msg_in", "bonk", "crunch", "clank", "baby",
   // Schleifen (loop: true)
   "fire", "tension", "muzak",
   "amb_city", "amb_wind", "amb_wind_strong", "amb_space", "amb_interior", "amb_nature", "amb_night", "amb_underwater", "amb_lava", "amb_crowd", "amb_hospital",

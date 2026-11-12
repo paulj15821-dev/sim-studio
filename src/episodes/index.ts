@@ -5,6 +5,8 @@ import { asteroid } from "./asteroid";
 import { koma } from "./koma";
 import { verschwinden } from "./verschwinden";
 import { wachsen } from "./wachsen";
+import { atombombe } from "./atombombe";
+import { maenner } from "./maenner";
 import { angriff } from "./angriff";
 import { testbild } from "./testbild";
 
@@ -14,6 +16,8 @@ export const EPISODES: Episode[] = [
   koma,
   verschwinden,
   wachsen,
+  atombombe,
+  maenner,
   angriff,
   testbild, // Look-Test, keine Episode zum Posten
 ];
