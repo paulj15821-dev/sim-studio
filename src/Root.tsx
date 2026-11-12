@@ -39,5 +39,11 @@ export const Root: React.FC = () => (
     ))}
     <Still id="Banner" component={Banner} defaultProps={{ showSafe: false }} width={2560} height={1440} />
     <Still id="Banner-Sicherheitszone" component={Banner} defaultProps={{ showSafe: true }} width={2560} height={1440} />
+    {/* Englische Kanäle */}
+    {(["orbit", "studio", "schrift"] as ProfileVariant[]).map((v) => (
+      <Still key={`en-${v}`} id={`Profilbild-${v}-en`} component={ProfilePic} defaultProps={{ variant: v, lang: "en" as const }} width={1080} height={1080} />
+    ))}
+    <Still id="Banner-en" component={Banner} defaultProps={{ showSafe: false, lang: "en" as const }} width={2560} height={1440} />
+    <Still id="Banner-Sicherheitszone-en" component={Banner} defaultProps={{ showSafe: true, lang: "en" as const }} width={2560} height={1440} />
   </>
 );

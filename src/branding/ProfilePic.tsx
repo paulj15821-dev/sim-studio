@@ -30,7 +30,10 @@ export const QuestionMark: React.FC<{ position: [number, number, number]; rotati
 
 export type ProfileVariant = "orbit" | "studio" | "schrift";
 
-export const ProfilePic: React.FC<{ variant: ProfileVariant }> = ({ variant }) => {
+export type Lang = "de" | "en";
+export const TITLE: Record<Lang, string> = { de: "Was wenn", en: "What if" };
+
+export const ProfilePic: React.FC<{ variant: ProfileVariant; lang?: Lang }> = ({ variant, lang = "de" }) => {
   const space = variant !== "studio";
   return (
     <AbsoluteFill>
@@ -55,7 +58,7 @@ export const ProfilePic: React.FC<{ variant: ProfileVariant }> = ({ variant }) =
       </Stage>
       {variant === "schrift" && (
         <div style={{ position: "absolute", left: 0, right: 0, top: 640, textAlign: "center", fontFamily: FONT.serif, fontSize: 150, color: "#FFFFFF", textShadow: "0 4px 24px rgba(0,0,0,0.6)", letterSpacing: "-0.01em" }}>
-          Was wenn<span style={{ color: COLOR.accent }}>..?</span>
+          {TITLE[lang]}<span style={{ color: COLOR.accent }}>..?</span>
         </div>
       )}
     </AbsoluteFill>
