@@ -8,6 +8,7 @@ import { wachsen } from "./wachsen";
 import { atombombe } from "./atombombe";
 import { maenner } from "./maenner";
 import { angriff } from "./angriff";
+import { beschleunigen } from "./beschleunigen";
 import { testbild } from "./testbild";
 
 export const EPISODES: Episode[] = [
@@ -19,5 +20,6 @@ export const EPISODES: Episode[] = [
   atombombe,
   maenner,
   angriff,
+  beschleunigen,
   testbild, // Look-Test, keine Episode zum Posten
 ];
