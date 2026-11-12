@@ -3,11 +3,13 @@ import type { Episode } from "../types";
 import { aufzug } from "./aufzug";
 import { asteroid } from "./asteroid";
 import { koma } from "./koma";
+import { verschwinden } from "./verschwinden";
 import { testbild } from "./testbild";
 
 export const EPISODES: Episode[] = [
   aufzug,
   asteroid,
   koma,
+  verschwinden,
   testbild, // Look-Test, keine Episode zum Posten
 ];

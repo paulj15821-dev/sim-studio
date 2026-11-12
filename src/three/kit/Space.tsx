@@ -106,10 +106,12 @@ const NOISE_GLSL = /* glsl */ `
 `;
 
 /** Erde komplett im Shader: Kontinente, Klimazonen, Gebirge, Eis; Ozean glänzt (niedrige Rauheit). */
-function earthMaterial(seed: number, night: boolean) {
+function earthMaterial(seed: number, night: boolean, cityLights = false) {
   const m = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 });
+  m.userData.uLights = { value: 1 };
   m.onBeforeCompile = (sh) => {
     sh.uniforms.uSeed = { value: seed * 1.37 };
+    sh.uniforms.uLights = m.userData.uLights;
     sh.vertexShader = sh.vertexShader
       .replace("#include <common>", "#include <common>\nvarying vec3 vObj;")
       .replace("#include <begin_vertex>", "#include <begin_vertex>\nvObj = position;");
@@ -117,7 +119,7 @@ function earthMaterial(seed: number, night: boolean) {
       .replace(
         "#include <common>",
         `#include <common>
-        varying vec3 vObj; uniform float uSeed; float eWater;
+        varying vec3 vObj; uniform float uSeed; uniform float uLights; float eWater;
         ${NOISE_GLSL}
         vec3 earthCol(vec3 d){
           vec3 o = vec3(uSeed, uSeed * 0.7, uSeed * 1.3);
@@ -147,9 +149,25 @@ function earthMaterial(seed: number, night: boolean) {
         }`
       )
       .replace("#include <map_fragment>", `#include <map_fragment>\n diffuseColor.rgb = earthCol(normalize(vObj))${night ? " * vec3(0.1, 0.12, 0.18)" : ""};`)
-      .replace("#include <roughnessmap_fragment>", "#include <roughnessmap_fragment>\n roughnessFactor = mix(0.92, 0.32, eWater);");
+      .replace("#include <roughnessmap_fragment>", "#include <roughnessmap_fragment>\n roughnessFactor = mix(0.92, 0.32, eWater);")
+      .replace(
+        "#include <emissivemap_fragment>",
+        cityLights
+          ? `#include <emissivemap_fragment>
+        {
+          vec3 dd = normalize(vObj); vec3 oo = vec3(uSeed, uSeed * 0.7, uSeed * 1.3);
+          float land = (1.0 - eWater) * (1.0 - smoothstep(0.75, 0.85, abs(dd.y)));
+          float coast = 1.0 - smoothstep(0.0, 0.05, pFbm(dd * 1.6 + oo, 9) - 0.5);
+          float metro = smoothstep(0.52, 0.72, pFbm(dd * 9.0 + oo + 3.0, 4)) + coast * 0.6;
+          float dots = smoothstep(0.62, 0.8, pNoise(dd * 260.0 + oo)) + smoothstep(0.55, 0.75, pNoise(dd * 90.0 + oo + 7.0)) * 0.5;
+          float region = pFbm(dd * 5.0 + oo + 11.0, 3);
+          float on = smoothstep(region - 0.03, region + 0.03, uLights * 0.62 + 0.24);
+          totalEmissiveRadiance += vec3(1.0, 0.72, 0.38) * land * metro * dots * on * 2.2;
+        }`
+          : "#include <emissivemap_fragment>"
+      );
   };
-  m.customProgramCacheKey = () => `earth-${night}`;
+  m.customProgramCacheKey = () => `earth-${night}-${cityLights}`;
   return m;
 }
 
@@ -214,8 +232,10 @@ function moonTexture(seed: number) {
 /** `tilt` = Achsneigung (rad) um X. Achtung: bei 0,41 liegt der Pol fast genau oben (+Y) –
  *  wer von oben auf die Erde schaut (z. B. Aufzug), sollte ~0,9 nehmen, sonst sieht man nur Eis/Tundra.
  *  `lowpoly` = alter Facetten-Look. Standard ist die realistische, texturierte Erde. */
-export const Earth: React.FC<{ radius?: number; position?: Vec3; rotationY?: number; tilt?: number; clouds?: boolean; atmosphere?: boolean; night?: boolean; seed?: number; detail?: number; cloudHeight?: number; lowpoly?: boolean }> = ({
-  radius = 1, position = [0, 0, 0], rotationY = 0, tilt = 0.41, clouds = true, atmosphere = true, night = false, seed = 3, detail = 5, cloudHeight = 0.015, lowpoly = false,
+export const Earth: React.FC<{ radius?: number; position?: Vec3; rotationY?: number; tilt?: number; clouds?: boolean; atmosphere?: boolean; night?: boolean; seed?: number; detail?: number; cloudHeight?: number; lowpoly?: boolean;
+  /** Nur mit `night`: Stadtlichter 1 = alle an, 0 = alle aus (gehen regionsweise aus) */
+  lights?: number }> = ({
+  radius = 1, position = [0, 0, 0], rotationY = 0, tilt = 0.41, clouds = true, atmosphere = true, night = false, seed = 3, detail = 5, cloudHeight = 0.015, lowpoly = false, lights,
 }) => {
   const ground = useMemo(
     () =>
@@ -232,7 +252,9 @@ export const Earth: React.FC<{ radius?: number; position?: Vec3; rotationY?: num
         : null,
     [seed, detail, night, lowpoly]
   );
-  const mats = useMemo(() => (lowpoly ? null : { ground: earthMaterial(seed, night), clouds: cloudMaterial(seed) }), [seed, night, lowpoly]);
+  const withLights = night && lights != null;
+  const mats = useMemo(() => (lowpoly ? null : { ground: earthMaterial(seed, night, withLights), clouds: cloudMaterial(seed) }), [seed, night, lowpoly, withLights]);
+  if (mats && withLights) mats.ground.userData.uLights.value = lights;
   const sphere = useMemo(() => new THREE.SphereGeometry(1, 384, 192), []);
   const cloudGeo = useMemo(
     () => (clouds && lowpoly ? faceColored(1 + cloudHeight, 4, (d) => (fbm3(d.x * 3 + 4, d.y * 3, d.z * 3, seed + 99, 3) > 0.6 ? new THREE.Color("#FFFFFF") : null)) : null),

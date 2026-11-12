@@ -64,15 +64,16 @@ export const Box: React.FC<{
   cast?: boolean;
   receive?: boolean;
   emissive?: string;
+  emissiveIntensity?: number;
   opacity?: number;
   map?: THREE.Texture;
   /** Kantenradius relativ zur kleinsten Kante (0 = scharf). Leicht gerundete Kanten fangen Glanzlichter → wirkt echter. */
   bevel?: number;
   roughness?: number;
   metalness?: number;
-}> = ({ size, color, position, rotation, cast = true, receive = true, emissive, opacity, map, bevel = 0.12, roughness, metalness }) => (
+}> = ({ size, color, position, rotation, cast = true, receive = true, emissive, emissiveIntensity, opacity, map, bevel = 0.12, roughness, metalness }) => (
   <mesh position={position} rotation={rotation} castShadow={cast} receiveShadow={receive} geometry={boxGeo(size, map ? 0 : bevel)}>
-    <Flat color={color} emissive={emissive} opacity={opacity} map={map} roughness={roughness} metalness={metalness} />
+    <Flat color={color} emissive={emissive} emissiveIntensity={emissiveIntensity} opacity={opacity} map={map} roughness={roughness} metalness={metalness} />
   </mesh>
 );
 
