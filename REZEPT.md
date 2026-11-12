@@ -29,10 +29,20 @@ Zwei Formate:
 Gute Prämissen sind in **einem Satz** verständlich, starten **im Alltag** und enden **im Extremen**
 (Erdkern, Weltall, Atome, Lichtgeschwindigkeit, Jahrzehnte).
 
-## 2. Der Hook (Sekunde 0–2,5)
+## 2. Der Hook (Sekunde 0–3) – wichtigster Teil des Videos
 
-- Frage oben mittig, Serifenschrift, 2 Zeilen, **das Schlüsselwort farbig** („**2× schneller**“).
-- Die Szene **läuft schon** (Figur gräbt/läuft/fährt) – nie ein Standbild, nie ein Logo.
+**Eigene Zahlen (12.11., Aufzug + 2. Video):** 98 % der Aufrufe kommen aus „Für dich“, aber **~25 % sind nach
+1 s weg, ~50 % nach 5 s**. Wer die ersten Sekunden übersteht, schaut lange. → Der Einstieg entscheidet alles.
+
+- **Cold Open (Pflicht):** `coldOpen: { at: <Sekunde des Höhepunkts>, dur: 1.0 }` – Bild 0 zeigt das
+  Spektakulärste des Videos (Einschlag, Mond, Erdkern …), dann Rückspul-Blitz und Start von vorn.
+  Der Zuschauer sieht sofort, *wohin* es geht, und bleibt, um zu sehen *wie*.
+- **Hook-Text** (macht `<Hook>` automatisch): fette Inter auf dunklen Textkästen, ab Bild 0 voll sichtbar
+  (Bild 0 ist das Vorschaubild beim Scrollen). Max. 12 Wörter, **ein** Schlüsselwort in Mint.
+- **Max groß** und in Bewegung in den ersten Sekunden – keine fremden Figuren im Vordergrund, kein Weitwinkel-Grau.
+- **Erster Wow-Moment spätestens bei Sekunde 3** (nach dem Cold Open). Die Regel startet sofort, nicht nach
+  5 s Alltag. Lieber höherer Startwert / schnellerer Takt als langsames Anlaufen.
+- **Ton ab Bild 0**: Schlag + Atmo des Höhepunkts (kommt automatisch mit dem Cold Open).
 - Ab Frame 1 tickt der Zähler. Bewegung + Zahl + Frage = Daumen stoppt.
 
 ## 3. Das HUD (das Markenzeichen)
@@ -52,14 +62,16 @@ SCHNELLER ALS EIN ICE   ← Vergleich, wechselt bei Meilensteinen
 
 ## 4. Die Eskalationsleiter (der eigentliche Plot)
 
-~25 Beats à 2–3 s. Jeder Beat = **neue Welt / neuer Vergleich**. Struktur:
+**Aktuell 30–40 s** (Wachstumsphase, höhere Durchschau-Quote). ~14–18 Beats à 2 s.
+Jeder Beat = **neue Welt / neuer Vergleich**. Struktur (Zeiten ohne Cold Open):
 
-1. **Alltag** (0–10 s): Garten, Straße, Schlafzimmer. Nebenfiguren reagieren (Frau, Hund, Passanten).
-2. **Bekannte Meilensteine** (10–25 s): Wasserrohr, U-Bahn, Eiffelturm, Wolken, Gras wird Dschungel.
-3. **Wissen/Staunen** (25–45 s): Öl, Magma, Schallmauer, Bärtierchen, Erdkrümmung, ISS.
-4. **Extrem** (45–58 s): Erdkern, Mond, Atome, Lichtgeschwindigkeit, Jahrzehnte.
-5. **Payoff/Twist** (58–64 s): Konsequenz, Pointe, Callback an den Anfang
-   (Ozean läuft ins Loch, „Du bist gefeuert.“, „Es ist seine Ex.“, 1 s = 61 s auf der Erde).
+1. **Alltag** (0–3 s): kurz! Max groß, Regel startet sofort.
+2. **Bekannte Meilensteine** (3–12 s): Eiffelturm, Wolken, U-Bahn …
+3. **Wissen/Staunen** (12–22 s): Schallmauer, Erdkrümmung, ISS …
+4. **Extrem** (22–30 s): Mond, Erdkern, Atome, Lichtgeschwindigkeit.
+5. **Payoff/Twist** (letzte 4–5 s): Pointe, Callback an den Anfang.
+
+Später (ab Creator-Programm) wieder 61–65 s mit ~25 Beats; Phasen dann 0–5 / 5–20 / 20–40 / 40–56 / 56–64 s.
 
 Regeln:
 - **Echte Zahlen.** Meilensteine stimmen mit dem HUD überein (Eiffelturm erscheint, wenn HUD 330 m zeigt).
@@ -69,7 +81,8 @@ Regeln:
 
 ## 5. Die Untertitel
 
-- Mittig, ca. 58 % Bildhöhe, Serife, weiß mit weichem Schatten, 1–2 Zeilen, **max. ~8 Wörter**.
+- Mittig, ca. 58 % Bildhöhe, fette Inter, weiß mit kräftigem Schatten (aufs Handy optimiert), 1–2 Zeilen,
+  **max. ~8 Wörter**. Kursiv (`italic: true`) = Serifen-Pointe.
 - Wechsel alle 2–3 s, oft mit „…“ über zwei Beats gezogen („Und es verdoppelt sich…“ / „…immer weiter.“).
 - Ton: trocken, knapp, leicht witzig. Fakten + Reaktion („Seine Schaufel glüht.“).
 
@@ -83,7 +96,8 @@ Regeln:
 
 ## 7. Plattform-Fakten
 
-- **Länge 61–65 s** → über 1 Minute (Voraussetzung für TikTok Creator Rewards), YouTube Shorts bis 3 min ok.
+- **Länge aktuell 30–40 s** (Wachstum: Durchschau-Quote zählt). Sobald der Kanal im Creator-Programm ist:
+  61–65 s (über 1 Minute ist Voraussetzung für TikTok Creator Rewards). YouTube Shorts bis 3 min ok.
 - Ohne Voiceover international verständlich; Musik: ruhig-episch/ambient, wird von dir hinzugefügt.
 - Sicherheitszonen: oben 160 px, unten 420 px, rechts 140 px frei lassen (TikTok-UI).
 

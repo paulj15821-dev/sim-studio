@@ -6,6 +6,7 @@ import { EPISODES } from "./episodes";
 import { SimVideo } from "./SimVideo";
 import { VIDEO } from "./style/theme";
 import type { Episode } from "./types";
+import { totalDuration } from "./lib/episode";
 
 // Episoden enthalten Funktionen und JSX → nicht als Props serialisierbar.
 // Darum bekommt jede Episode eine eigene, props-lose Komponente.
@@ -26,7 +27,7 @@ export const Root: React.FC = () => (
         key={ep.id}
         id={ep.id}
         component={componentFor(ep)}
-        durationInFrames={Math.round(ep.duration * VIDEO.fps)}
+        durationInFrames={Math.round(totalDuration(ep) * VIDEO.fps)}
         fps={VIDEO.fps}
         width={VIDEO.width}
         height={VIDEO.height}

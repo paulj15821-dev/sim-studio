@@ -17,6 +17,7 @@ export const aufzug: Episode = {
   id: "Aufzug",
   title: "Was wäre, wenn dein Aufzug alle 2 Sekunden doppelt so schnell wird?",
   duration: 62,
+  coldOpen: { at: 57.3, dur: 1.0 },
   hook: { text: "Was wäre, wenn dein Aufzug alle 2 Sekunden doppelt so schnell wird?", highlight: ["doppelt so schnell"], until: 3.0 },
 
   hud: {

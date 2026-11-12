@@ -5,7 +5,7 @@ import { continueRender, delayRender, staticFile } from "remotion";
 const FACES: { family: string; file: string; style: string; weight: string }[] = [
   { family: "Instrument Serif", file: "InstrumentSerif-latin.woff2", style: "normal", weight: "400" },
   { family: "Instrument Serif", file: "InstrumentSerif-Italic-latin.woff2", style: "italic", weight: "400" },
-  { family: "Inter", file: "Inter-latin.woff2", style: "normal", weight: "500 700" },
+  { family: "Inter", file: "Inter-latin.woff2", style: "normal", weight: "100 900" }, // variable Schrift
 ];
 
 if (typeof document !== "undefined") {

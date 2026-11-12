@@ -3,10 +3,11 @@
 Alles hier ist in `src/style/theme.ts` als Code hinterlegt. Änderst du dort etwas, ändert sich jedes Video.
 
 ## Format
-- 1080 × 1920, 30 fps, 61–65 s, H.264 (CRF 18), AAC-Ton mit Soundeffekten. Musik/Voice-over fügt der Nutzer selbst hinzu.
+- 1080 × 1920, 30 fps, aktuell 30–40 s (später 61–65 s), H.264 (CRF 18), AAC-Ton mit Soundeffekten. Musik/Voice-over fügt der Nutzer selbst hinzu.
 
 ## Schrift
-- **Instrument Serif** – Hook, Untertitel, HUD-Zahl.
+- **Inter 800** – Hook (auf dunklen Textkästen, ab Bild 0 sichtbar). **Inter 750** – Untertitel (kräftiger Schatten).
+- **Instrument Serif** – HUD-Zahl und kursive Pointen-Untertitel.
 - **Inter** (600, Versalien, Sperrung 0.14em) – HUD-Labels und Pillen.
 
 ## Farben
@@ -20,7 +21,7 @@ Alles hier ist in `src/style/theme.ts` als Code hinterlegt. Änderst du dort etw
 (Gras, Asphalt, Fassaden, Haut, Wolken, Erde, Lava, Wasser, Mikrowelt …).
 
 ## Layout (Sicherheitszonen beachten)
-- **Hook**: oben mittig, y ≈ 300 px, 76 px, 2 Zeilen, Schlüsselwort in Mint. Nur 0–2,6 s.
+- **Hook**: oben, y ≈ 260 px, 70–86 px (automatisch nach Länge), Schlüsselwort in Mint. Steht über dem Cold Open bis ~2,6 s danach.
 - **HUD**: links, x = 70 px, y ≈ 650 px. Label 24 px → Zahl 96 px → Vergleich 22 px → Pille → Leiste.
 - **Untertitel**: mittig, y ≈ 1120 px, 58 px, max. 2 Zeilen, Breite ≤ 820 px.
 - Unten 420 px und rechts 140 px frei.

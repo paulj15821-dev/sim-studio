@@ -22,31 +22,50 @@ export const Highlighted: React.FC<{ text: string; highlight?: string[] }> = ({ 
   );
 };
 
-export const Hook: React.FC<{ hook: Episode["hook"] }> = ({ hook }) => {
+/**
+ * Hook: groß, fett, auf dunklen Textkästen (lesbar auf jedem Hintergrund), ab Bild 0 voll sichtbar
+ * (Bild 0 = Vorschaubild beim Scrollen). Kurzer „Punch“ in den ersten Frames, Schlüsselwort in Mint.
+ * `extra` = Sekunden, um die der Hook länger steht (Cold Open).
+ */
+export const Hook: React.FC<{ hook: Episode["hook"]; extra?: number }> = ({ hook, extra = 0 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const until = (hook.until ?? 2.6) * fps;
-  const op = interpolate(frame, [0, 3, until - 6, until], [0.0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const until = ((hook.until ?? 2.6) + extra) * fps;
   if (frame > until) return null;
+  const op = interpolate(frame, [until - 6, until], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const punch = interpolate(frame, [0, 2, 6], [1.06, 1.06, 1], { extrapolateRight: "clamp" });
+  const size = hook.text.length > 62 ? 70 : hook.text.length > 48 ? 78 : 86;
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
       <div
         style={{
           position: "absolute",
-          top: LAYOUT.hookY,
-          left: 90,
-          right: 90,
+          top: LAYOUT.hookY - 40,
+          left: 70,
+          right: 150,
           textAlign: "center",
-          fontFamily: FONT.serif,
-          fontSize: 76,
-          lineHeight: 1.08,
-          color: COLOR.text,
-          textShadow: COLOR.shadow,
           opacity: op,
-          letterSpacing: "-0.01em",
+          transform: `scale(${punch})`,
+          transformOrigin: "50% 0%",
         }}
       >
-        <Highlighted text={hook.text} highlight={hook.highlight} />
+        <span
+          style={{
+            fontFamily: FONT.sans,
+            fontWeight: 800,
+            fontSize: size,
+            lineHeight: 1.22,
+            letterSpacing: "-0.025em",
+            color: COLOR.text,
+            background: "rgba(8, 11, 18, 0.72)",
+            padding: "4px 20px",
+            borderRadius: 16,
+            boxDecorationBreak: "clone",
+            WebkitBoxDecorationBreak: "clone",
+          }}
+        >
+          <Highlighted text={hook.text} highlight={hook.highlight} />
+        </span>
       </div>
     </AbsoluteFill>
   );
@@ -78,12 +97,14 @@ export const Captions: React.FC<{ captions: Caption[]; duration: number }> = ({ 
           left: (1080 - LAYOUT.captionMaxW) / 2,
           width: LAYOUT.captionMaxW,
           textAlign: "center",
-          fontFamily: c.italic ? FONT.serifItalic : FONT.serif,
+          fontFamily: c.italic ? FONT.serifItalic : FONT.sans,
           fontStyle: c.italic ? "italic" : "normal",
-          fontSize: 58,
-          lineHeight: 1.12,
+          fontWeight: c.italic ? 400 : 750,
+          fontSize: c.italic ? 66 : 56,
+          lineHeight: 1.15,
+          letterSpacing: c.italic ? "0" : "-0.015em",
           color: COLOR.text,
-          textShadow: COLOR.shadow,
+          textShadow: "0 0 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.8), 0 4px 22px rgba(0,0,0,0.55)",
           opacity: inOp * outOp,
           transform: `translateY(${y}px)`,
         }}

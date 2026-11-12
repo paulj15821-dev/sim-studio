@@ -1,6 +1,7 @@
 // Sound-Design: Bibliothek + Regeln. Wird vom Video (SoundLayer) UND vom Mix-Skript (npm run sfx) benutzt,
 // damit die schnelle Ton-Vorschau exakt dem finalen Render entspricht.
 import type { Episode } from "../types";
+import { coldOpenDur } from "../lib/episode";
 
 /** Alle Sounds in public/sfx (erzeugt von scripts/make-sfx.mjs). */
 export const SFX = [
@@ -52,7 +53,7 @@ const vary = (k: number, a: number, b: number) => a + (b - a) * ((Math.sin(k * 1
  *  5. Gezielte Cues aus `episode.sfx`
  * Lautstärken sind so gewählt, dass darunter noch Platz für Musik ist.
  */
-export function buildVoices(ep: Episode, fps = 30): Voice[] {
+function episodeVoices(ep: Episode, fps: number): Voice[] {
   const cfg = { cuts: true, captions: true, ticks: true, milestones: true, volume: 1, ...ep.sound };
   const v: Voice[] = [];
   const add = (x: Omit<Voice, "rate" | "loop" | "fadeIn" | "fadeOut"> & Partial<Voice>) =>
@@ -126,4 +127,28 @@ export function voiceGain(x: Voice, t: number, len: number) {
   if (x.fadeIn > 0) g *= Math.min(1, t / x.fadeIn);
   if (x.fadeOut > 0) g *= Math.min(1, Math.max(0, (len - t) / x.fadeOut));
   return g;
+}
+
+/**
+ * Komplette Tonspur des fertigen Videos (absolute Zeiten). Mit Cold Open:
+ *  - Bild 0: Schlag; die Atmo und Cues des Höhepunkts laufen mit (auf die Cold-Open-Länge gekürzt)
+ *  - am Ende des Cold Opens: Rückspul-Sound, danach die normale Episode um `dur` verschoben
+ */
+export function buildVoices(ep: Episode, fps = 30): Voice[] {
+  const main = episodeVoices(ep, fps);
+  const co = coldOpenDur(ep);
+  if (!co || !ep.coldOpen) return main;
+  const at = ep.coldOpen.at, endCo = at + co;
+  const cold: Voice[] = [];
+  for (const x of main) {
+    if (x.tag === "untertitel" || x.tag === "tick" || x.tag === "hook" || x.tag === "meilenstein") continue;
+    const xEnd = x.dur != null ? x.from + x.dur : Infinity;
+    if (x.loop && x.from <= at && xEnd > at) cold.push({ ...x, from: 0, dur: Math.min(xEnd, endCo) - at + 0.1, fadeIn: 0, fadeOut: 0.12 });
+    else if (!x.loop && x.from >= at - 0.05 && x.from < endCo - 0.1) cold.push({ ...x, from: Math.max(0, x.from - at), dur: endCo - Math.max(x.from, at) + 0.12, fadeIn: 0, fadeOut: 0.12, tag: "cold" });
+  }
+  cold.push({ sound: "impact", from: 0, volume: 0.45, rate: 1, loop: false, fadeIn: 0, fadeOut: 0, tag: "cold" });
+  cold.push({ sound: "boom", from: 0, volume: 0.35, rate: 1.1, loop: false, fadeIn: 0, fadeOut: 0.15, dur: co + 0.15, tag: "cold" });
+  cold.push({ sound: "swoosh_down", from: Math.max(0, co - 0.45), volume: 0.5, rate: 1.5, loop: false, fadeIn: 0, fadeOut: 0, tag: "rückspulen" });
+  cold.push({ sound: "glitch", from: Math.max(0, co - 0.2), volume: 0.4, rate: 1.2, loop: false, fadeIn: 0, fadeOut: 0, tag: "rückspulen" });
+  return [...cold, ...main.map((x) => ({ ...x, from: x.from + co }))];
 }

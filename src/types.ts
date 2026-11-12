@@ -65,6 +65,12 @@ export type Episode = {
   shots: Shot[];
   /** Optional: Musik-Datei in public/, z. B. "music/epic.mp3" (normalerweise fügt der Nutzer Musik selbst hinzu) */
   music?: { src: string; volume?: number };
+  /**
+   * Cold Open: Die ersten `dur` Sekunden (Standard 1,0) zeigen den Höhepunkt ab Videosekunde `at`
+   * (mit Hook darüber), dann Rückspul-Effekt und das Video startet von vorn. Gesamtlänge = duration + dur.
+   * Stoppt den Daumen: Im allerersten Bild sieht man, wohin es geht.
+   */
+  coldOpen?: { at: number; dur?: number };
   /** Gezielte Soundeffekte (Knall, Tür, Flugzeug …). Automatische Sounds siehe src/audio/sfx.ts */
   sfx?: SfxCue[];
   /** Sound-Grundeinstellungen: Standard-Atmo + automatische Ebenen an/aus, Gesamtlautstärke */

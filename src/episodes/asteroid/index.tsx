@@ -14,6 +14,7 @@ export const asteroid: Episode = {
   id: "Asteroid",
   title: "Was wäre, wenn heute Abend ein Asteroid einschlägt?",
   duration: 63,
+  coldOpen: { at: IMPACT + 0.4, dur: 1.0 },
   hook: { text: "Was wäre, wenn heute Abend ein Asteroid einschlägt?", highlight: ["Asteroid"], until: 2.8 },
 
   hud: [
