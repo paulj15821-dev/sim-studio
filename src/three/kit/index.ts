@@ -14,3 +14,4 @@ export {
   Room, Bed, Table, CeilingLight, Door, Shelf,
 } from "./Interior";
 export { Stage, Camera, type LightPreset } from "../Stage";
+export { EgoRig, Limb as EgoLimb, type EgoPose } from "./Ego";

@@ -65,6 +65,11 @@ export type Episode = {
   shots: Shot[];
   /** Optional: Musik-Datei in public/, z. B. "music/epic.mp3" (normalerweise fügt der Nutzer Musik selbst hinzu) */
   music?: { src: string; volume?: number };
+  /** Kapitel-Karten (POV-Format): große Zwischentitel in der Bildmitte, z. B. { at: 8, text: "MINUTE 30" }.
+   *  Zeigen Fortschritt + „da kommt noch mehr“ → Zuschauer bleiben. Bekommen automatisch einen Sound. */
+  chapters?: { at: number; text: string; dur?: number }[];
+  /** Akzentfarbe für Hook/Untertitel-Highlights: "mint" (Standard, Staunen) oder "red" (Gefahr, POV) */
+  accent?: "mint" | "red";
   /**
    * Englische Fassung (gleiche Animation, nur Texte). Erzeugt automatisch die Composition „<id>-EN“.
    * `captions` = gleiche Reihenfolge/Anzahl wie die deutschen (Timing wird übernommen).
@@ -93,5 +98,7 @@ export type EpisodeEN = {
   hook: { text: string; highlight?: string[] };
   captions: (string | { text: string; highlight?: string[] })[];
   hud?: { label?: string; compare?: string[]; pill?: string; secondary?: string }[];
+  /** Kapitel-Texte in gleicher Reihenfolge wie `chapters` */
+  chapters?: string[];
   upload?: { caption: string; hashtags: string[] };
 };

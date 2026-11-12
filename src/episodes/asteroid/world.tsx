@@ -318,7 +318,8 @@ export const Hometown: React.FC<HometownProps> = ({ shot, mood, cam, actors = []
 
 // ═════════════════════════ Wohnzimmer ═════════════════════════
 
-export const Living: React.FC<{ shot: ShotInfo; cam: CamFn }> = ({ shot, cam }) => {
+/** `extra`: zusätzliche Objekte (z. B. POV-Arme) */
+export const Living: React.FC<{ shot: ShotInfo; cam: CamFn; extra?: (t: number, local: number) => React.ReactNode }> = ({ shot, cam, extra }) => {
   const { t, local, p } = useTimes(shot);
   const c = cam({ t, local, p });
   const W = 7, H = 3, D = 6;
@@ -366,6 +367,7 @@ export const Living: React.FC<{ shot: ShotInfo; cam: CamFn }> = ({ shot, cam }) 
       </group>
       <pointLight position={[0.5, 2.6, 0.5]} intensity={3} distance={9} decay={2} color="#FFE4C0" />
       <Max pose="phone" hold="phone" time={t} position={[-0.6, 0, -1.4]} rotationY={0.35} />
+      {extra?.(t, local)}
     </Stage>
   );
 };

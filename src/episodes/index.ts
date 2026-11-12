@@ -9,6 +9,7 @@ import { atombombe } from "./atombombe";
 import { maenner } from "./maenner";
 import { angriff } from "./angriff";
 import { beschleunigen } from "./beschleunigen";
+import { asteroidPov } from "./asteroid-pov";
 import { testbild } from "./testbild";
 
 export const EPISODES: Episode[] = [
@@ -21,5 +22,6 @@ export const EPISODES: Episode[] = [
   maenner,
   angriff,
   beschleunigen,
+  asteroidPov,
   testbild, // Look-Test, keine Episode zum Posten
 ];
