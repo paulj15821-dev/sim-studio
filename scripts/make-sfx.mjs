@@ -238,6 +238,10 @@ S.amb_hospital = () => {
   return normRms(loopify(reverb(wide(w, 9), 0.5, 0.25, 0.5, 0.01), 1), -28);
 };
 
+// Episode Wachsen: Comic-Kopfstoß + Bruch (Dach, Mauerwerk)
+S.bonk = () => { const len = 0.9; const w = mix(len, [thump(len, 520, 150, 0.12), 1.1], [fm(0.6, 330, 1.48, 2.2, 0.16, 0.05), 0.6], [click(len, 1800, 0.004), 0.5], [env(osc(len, (t) => 900 * Math.exp(-t / 0.08) + 240, "tri"), expDec(0.1)), 0.35]); return normPeak(reverb(st(sat(w, 1.4)), 0.35, 0.2, 0.5, 0.4), -1.5); };
+S.crunch = () => { const len = 1.3; const w = mix(len, [svf(crackle(len, 900, 0.003), 2200, 0.8, "bp"), 2.2], [env(svf(brown(len), 400, 0.7, "lp"), (t) => Math.min(1, t / 0.01) * Math.exp(-t / 0.3)), 1.4], [thump(len, 120, 50, 0.15), 0.8]); env(w, (t) => Math.exp(-t / 0.5)); return normPeak(reverb(wide(w), 0.5, 0.3, 0.5, 0.6), -1.5); };
+
 // ───────────── Erzeugen ─────────────
 const only = process.argv.slice(2);
 console.log("Erzeuge Sounds nach public/sfx …");
