@@ -37,3 +37,4 @@ Einfach `/video` + Zeile kopieren. Alle sind eigene Prämissen – nicht von den
 
 ## Neue Ideen (von /ideen)
 | – | Was wäre, wenn alle Menschen auf einmal verschwinden? | Jahre ohne Menschen | Anzeige: Bus kommt in 2 min – nach 10.000 Jahren | gemacht |
+| – | Was wäre, wenn alle Männer auf einmal verschwinden? | Zeit ohne Männer (Sek. → 9 Monate) | Zahl „Männer auf der Erde“ steigt – Baby-Max mit zu großer Mütze | gemacht |
