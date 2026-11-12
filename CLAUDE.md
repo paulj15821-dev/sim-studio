@@ -122,9 +122,19 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 - Falls Remotion den Headless-Browser nicht laden kann: Netzwerkzugriff der Umgebung auf „Voll“ stellen
   (Claude Code → Environment-Einstellungen) bzw. `npx remotion browser ensure` ausführen.
 
-## Posting-Infos (bei jeder Auslieferung mitgeben)
-- Titel/Caption aus `episode.upload`, 3–6 Hashtags, Frage an die Zuschauer als Kommentar-Trigger.
-- Beste Zeiten (DE, Erfahrungswerte): täglich 7:30, 12:30, 16:30, 19:00 (Sa/So 1–2 h später), ≥ 3 h Abstand.
-  Erste Stunde: auf Kommentare antworten.
-- Englische Accounts (Publikum v. a. USA): ca. 0:00–2:00, 14:00–16:00 und 18:00–19:00 deutscher Zeit
-  (= abends/mittags/morgens an der US-Ostküste). Wenn nachts unpraktisch: Planen-Funktion der App nutzen.
+## Posting-Infos (bei jeder Auslieferung mitgeben – für BEIDE Sprachen)
+- Pro Sprache: Titel/Caption (`episode.upload` bzw. `episode.en.upload`), 3–6 Hashtags, Frage an die Zuschauer
+  als Kommentar-Trigger. Als zwei klar getrennte, kopierfertige Blöcke ausgeben (🇩🇪 / 🇺🇸🇬🇧).
+- Dazu diese Posting-Tabelle (alle Zeiten in **deutscher Zeit**; EN-Publikum v. a. USA-Ostküste + UK):
+
+  | Slot | 🇩🇪 Mo–Fr | 🇺🇸🇬🇧 Mo–Fr | 🇩🇪 Sa/So | 🇺🇸🇬🇧 Sa/So |
+  |---|---|---|---|---|
+  | 1 | 7:30 | 13:30 | 10:00 | 16:00 |
+  | 2 | 12:30 | 19:00 | 13:00 | 19:30 |
+  | 3 | 16:30 | 22:00 | 17:00 | 23:00 |
+  | 4 | 19:00 | 1:30 (planen) | 20:30 | 2:30 (planen) |
+
+  Nur 1–2 Posts/Tag: DE 12:30 + 19:00 · EN 19:00 + 1:30 (geplant; ohne Planen 13:30 + 19:00).
+  ≥ 3 h Abstand zwischen Posts. Nacht-Slots über die Planen-Funktion (TikTok Studio, bis 10 Tage).
+  Zeitumstellung: 8.–29. März und 25. Okt.–1. Nov. liegen die EN-Zeiten 1 h früher.
+  Erste Stunde nach dem Posten: auf Kommentare antworten.
