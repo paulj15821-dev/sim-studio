@@ -162,7 +162,7 @@ const Flame: React.FC<{ position: Vec3; size: number; t: number; seed: number }>
   );
 };
 
-export type Actor = { kind: "max" | "person"; seed?: number; pos: Vec3 | ((t: number) => Vec3); rotY?: number | ((t: number) => number); pose: Pose | ((t: number) => Pose); expr?: "neutral" | "happy" | "shock"; hold?: "phone" | "pizza" };
+export type Actor = { kind: "max" | "person"; seed?: number; pos: Vec3 | ((t: number) => Vec3); rotY?: number | ((t: number) => number); pose: Pose | ((t: number) => Pose); expr?: "neutral" | "happy" | "shock"; hold?: "phone" | "pizza" | "letter"; screen?: string };
 
 type HometownProps = {
   shot: ShotInfo;
@@ -175,13 +175,19 @@ type HometownProps = {
   door?: (t: number) => number;
   /** Fortschritt der Staubwand (blast) 0..1 */
   wall?: (local: number) => number;
+  /** Grill im Garten (Standard an) */
+  grill?: boolean;
+  /** Zusätzliche Objekte (andere Episoden, z. B. Sirene, Abfang-Spuren) */
+  extra?: (t: number, local: number) => React.ReactNode;
+  /** Ambient Occlusion erzwingen (z. B. 0 bei hellen Effekten am Himmel) */
+  ao?: number;
 };
 
 const LAMPS: Vec3[] = [[-22, 0, 11.6], [-2.5, 0, 11.6], [18, 0, 11.6], [-12, 0, 22.4], [8, 0, 22.4]];
 const ACROSS = [-26, -13, 0, 13, 26];
 const TREES: [number, number, number][] = [[-8.5, 6, 1.5], [9.5, 3, 1.3], [-19, 7, 1.6], [21, 8, 1.4], [-30, 6, 1.5], [6, 27, 1.4], [-20, 28, 1.5], [30, 4, 1.6]];
 
-export const Hometown: React.FC<HometownProps> = ({ shot, mood, cam, actors = [], meteor, shakeAmp = 0, door, wall }) => {
+export const Hometown: React.FC<HometownProps> = ({ shot, mood, cam, actors = [], meteor, shakeAmp = 0, door, wall, grill = true, extra, ao }) => {
   const { t, local, p } = useTimes(shot);
   const m = MOODS[mood];
   const c = cam({ t, local, p });
@@ -197,7 +203,7 @@ export const Hometown: React.FC<HometownProps> = ({ shot, mood, cam, actors = []
 
   return (
     <Stage preset={m.preset} bg={m.top} fog={m.fog} sunDir={m.sunDir} sunIntensity={m.sunIntensity} env={m.env} envIntensity={m.envIntensity}
-      shadowCenter={[0, 0, 10]} shadowSize={34} ao={met || m.glow ? 0 : 1}>
+      shadowCenter={[0, 0, 10]} shadowSize={34} ao={ao ?? (met || m.glow ? 0 : 1)}>
       <Camera pos={pos} look={c.look} fov={c.fov ?? 45} near={0.1} far={9000} />
       <SkyDome top={m.top} horizon={m.horizon} bottom={m.bottom} radius={4000} sun={mood === "golden" || mood === "dusk" ? m.sunDir : undefined} sunColor="#FFD2A0" haze={1} />
       {(mood === "night" || mood === "dusk" || mood === "entry") && <Stars n={1400} radius={3800} opacity={mood === "dusk" ? 0.35 : 0.8} />}
@@ -250,7 +256,7 @@ export const Hometown: React.FC<HometownProps> = ({ shot, mood, cam, actors = []
         </group>
       ))}
 
-      {mood !== "fire" && mood !== "blast" && mood !== "ash" && <Grill position={[2.3, 0, 8.9]} t={t} on={mood !== "quake"} />}
+      {grill && mood !== "fire" && mood !== "blast" && mood !== "ash" && <Grill position={[2.3, 0, 8.9]} t={t} on={mood !== "quake"} />}
 
       {/* Figuren */}
       {actors.map((a, i) => {
@@ -258,9 +264,10 @@ export const Hometown: React.FC<HometownProps> = ({ shot, mood, cam, actors = []
         const pp = typeof a.pos === "function" ? a.pos(t) : a.pos;
         const ry = typeof a.rotY === "function" ? a.rotY(t) : a.rotY ?? 0;
         return a.kind === "max"
-          ? <Max key={i} pose={ps} time={t} position={pp} rotationY={ry} expression={a.expr} hold={a.hold} />
-          : <Person key={i} seed={a.seed ?? i + 1} pose={ps} time={t} position={pp} rotationY={ry} expression={a.expr} hold={a.hold} />;
+          ? <Max key={i} pose={ps} time={t} position={pp} rotationY={ry} expression={a.expr} hold={a.hold} screen={a.screen} />
+          : <Person key={i} seed={a.seed ?? i + 1} pose={ps} time={t} position={pp} rotationY={ry} expression={a.expr} hold={a.hold} screen={a.screen} />;
       })}
+      {extra?.(t, local)}
 
       {/* Meteor am Himmel */}
       {met && (
