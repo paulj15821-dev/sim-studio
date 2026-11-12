@@ -38,6 +38,7 @@ export function localize(ep: Episode, lang: Lang): Episode {
       return typeof e === "string" ? { ...c, text: e, highlight: undefined } : { ...c, text: e.text, highlight: e.highlight };
     }),
     hud: enHud ? (Array.isArray(ep.hud) ? enHud : enHud[0]) : undefined,
+    chapters: ep.chapters?.map((c, i) => ({ ...c, text: en.chapters?.[i] ?? c.text })),
     upload: en.upload ?? ep.upload,
   };
 }

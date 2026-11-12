@@ -6,6 +6,34 @@ Alle sind **64–65 s lang**, 9:16, low-poly 3D, **keine Stimme** – nur Text +
 
 ---
 
+## 0. STANDARD-FORMAT: POV („Du bist mittendrin“) – seit 12.11.
+
+**Warum:** Unsere ersten Videos (Max von außen, Zahlen-Eskalation) bekamen ~1–4k Aufrufe, ~50 % waren nach 5 s weg.
+Ein Konkurrenz-Video mit derselben Prämisse („alle Männer verschwinden“) in POV-Erzählweise: 50k+ Aufrufe, 77 s lang.
+Der Unterschied ist nicht die Idee, sondern die **Erzählweise**. Ziel: Die Videos sollen **hypnotisieren** –
+in jeder Sekunde passiert etwas, das *dich* betrifft, und das nächste Kapitel verspricht mehr.
+
+**Die 8 Regeln (Referenz: `src/episodes/asteroid-pov/`):**
+1. **Ego-Kamera, „du“:** Kamera auf Augenhöhe (1,62 m), leichtes Atmen bzw. Laufschritte, **deine Hände im Bild**
+   (`<EgoRig pose=… />`: `phone`, `run`, `brace`, `cover`, `reach`, `idle`). Außen-Shots (Weltall, Zoom-out) nur
+   als kurze Einschübe („währenddessen“).
+2. **Sekunde 0–1: Es passiert etwas.** Kein Anlauf. Handy schreit, Person verschwindet, Boden reißt auf, Zahl stürzt.
+   Cold Open zeigt den bedrohlichsten Moment *aus deiner Sicht* (z. B. Staubwand über dem Haus).
+3. **Gefahr statt Statistik:** Die Frage im Kopf ist „**Überlebe ich das?**“ – nicht „wie groß wird die Zahl?“.
+   Physische Bedrohung (Lkw ohne Fahrer, Druckwelle, Wasser steigt) schlägt jede Zahl.
+4. **Befehle an den Zuschauer** in Gefahrenmomenten: „Lauf!“, „Zieh die Handbremse!“, „Schau nicht hin!“, „TÜR ZU!“.
+5. **Persönliche Folgen:** „**Dein** Vater ist weg. Sein Hemd hängt noch im Gurt.“ – Menschen, Dinge, Orte,
+   die man kennt (Mama, Bruder, Max als dein bester Freund, dein Zimmer, dein Supermarkt). Ein Bild, ein Detail.
+6. **Kapitel-Karten** für Zeitsprünge (`chapters`): „SEKUNDE 0“, „NOCH 30 MINUTEN“, „TAG 1“, „+ 50 MINUTEN“,
+   „JAHR 10“ – alle 3–6 s eine. Jede Karte = Versprechen „da kommt noch mehr“ (offene Schleife).
+7. **Rot für Gefahr** (`accent: "red"`): Highlight auf dem Gefahrenwort („weg“, „ohne Fahrer“, „Lauf!“).
+8. **Entscheidung + Pointe:** Mindestens eine Wahl, über die man streiten kann („Max will zur Autobahn. Du sagst:
+   Keller.“) → Kommentare. Am Ende ein trockener, menschlicher Gag (Pizzabote) – dann sofort Schluss.
+
+**Max** bleibt dabei: als dein bester Freund/Mitbewohner/Bruder **neben dir** (Wiedererkennung des Kanals).
+Das HUD bleibt (Countdown/Zeit seit …) – es tickt, aber die Story trägt das Video.
+Die Abschnitte 1–7 unten gelten weiter (Prämisse, Zahlen, Untertitel, Look), aber immer durch diese POV-Brille.
+
 ## 1. Die Prämisse (die halbe Miete)
 
 **„Was wäre, wenn [alltägliche Handlung] + [eine einzige Regel, die eskaliert]?"**

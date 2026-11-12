@@ -3,7 +3,7 @@
 // Relativistisch korrekt: echtes Tempo v = c·tanh(w/c) → nähert sich c, erreicht es aber nie.
 // Die Videozeit ist Max' Eigenzeit; auf der Erde vergeht dt·cosh(w/c) → Zeitdilatation explodiert.
 import { C_LIGHT, solveTime } from "../../lib/metric";
-import { intl } from "../../lib/i18n";
+import { intl, t as tr } from "../../lib/i18n";
 
 export const W0 = 3; // m/s
 export const EVERY = 1; // s
@@ -69,14 +69,14 @@ export const fmtV = (v: number) => {
 export const fmtEarth = (s: number) => {
   if (s < Y) {
     const u = (n: number, one: string, many: string) => `${nf(0).format(Math.floor(n))} ${Math.floor(n) === 1 ? one : many}`;
-    if (s < 60) return u(s, "Sekunde", "Sekunden");
-    if (s < 3600) return u(s / 60, "Minute", "Minuten");
-    if (s < 86400) return u(s / 3600, "Stunde", "Stunden");
-    return u(s / 86400, "Tag", "Tage");
+    if (s < 60) return u(s, tr("Sekunde", "second"), tr("Sekunden", "seconds"));
+    if (s < 3600) return u(s / 60, tr("Minute", "minute"), tr("Minuten", "minutes"));
+    if (s < 86400) return u(s / 3600, tr("Stunde", "hour"), tr("Stunden", "hours"));
+    return u(s / 86400, tr("Tag", "day"), tr("Tage", "days"));
   }
   const y = s / Y;
-  if (y >= 1e9) return `${nf(1).format(y / 1e9)} Mrd. Jahre`;
-  if (y >= 1e6) return `${nf(y >= 1e8 ? 0 : 1).format(y / 1e6)} Mio. Jahre`;
-  return `${nf(0).format(y)} ${Math.floor(y) === 1 ? "Jahr" : "Jahre"}`;
+  if (y >= 1e9) return `${nf(1).format(y / 1e9)} ${tr("Mrd. Jahre", "billion years")}`;
+  if (y >= 1e6) return `${nf(y >= 1e8 ? 0 : 1).format(y / 1e6)} ${tr("Mio. Jahre", "million years")}`;
+  return `${nf(0).format(y)} ${Math.floor(y) === 1 ? tr("Jahr", "year") : tr("Jahre", "years")}`;
 };
 export const fmtSec = (s: number) => `${nf(1).format(s)} s`;

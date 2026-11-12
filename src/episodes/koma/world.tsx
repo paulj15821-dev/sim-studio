@@ -14,7 +14,7 @@ import {
   SkyDome, Stars, Particles, Cloud, type Pose, type Outfit, type Joints,
 } from "../../three/kit";
 import { years } from "./metric";
-import { intl } from "../../lib/i18n";
+import { intl, t as tr } from "../../lib/i18n";
 
 export type Cam = { pos: Vec3; look: Vec3; fov?: number; roll?: number };
 export type CamFn = (c: { t: number; local: number; p: number }) => Cam;
@@ -83,7 +83,7 @@ function drawPhone(g: CanvasRenderingContext2D, ui: PhoneUI, time: number) {
     }
     if (ui.more) {
       g.textAlign = "center"; g.fillStyle = "#FFFFFF"; g.font = "700 26px Inter, sans-serif";
-      g.fillText(`+ ${intl().format(ui.more)} weitere`, CW / 2, y + 40);
+      g.fillText(`+ ${intl().format(ui.more)} ${tr("weitere", "more")}`, CW / 2, y + 40);
     }
     if (ui.battery != null) {
       g.strokeStyle = "#FFFFFF"; g.lineWidth = 3; rr(g, CW - 74, 22, 44, 22, 6); g.stroke();
@@ -102,7 +102,7 @@ function drawPhone(g: CanvasRenderingContext2D, ui: PhoneUI, time: number) {
   const inH = 74, inY = CH - inH - 22;
   g.fillStyle = "#FFFFFF"; rr(g, 16, inY, CW - 32, inH, 37); g.fill();
   g.font = "500 25px Inter, sans-serif"; g.fillStyle = ui.input ? "#1A2230" : "#9AA2A8";
-  const txt = ui.input || "Nachricht";
+  const txt = ui.input || tr("Nachricht", "Message");
   g.fillText(txt, 40, inY + 46);
   if (ui.cursor && Math.floor(time * 2.5) % 2 === 0) { const w = ui.input ? g.measureText(ui.input).width : 0; g.fillStyle = "#2BB894"; g.fillRect(42 + w, inY + 22, 3, 32); }
   // Nachrichten von unten nach oben

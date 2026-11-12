@@ -110,6 +110,13 @@ function episodeVoices(ep: Episode, fps: number): Voice[] {
     }
   }
 
+  // Kapitel-Karten: dumpfer Schlag + kurzer Whoosh davor
+  for (const c of ep.chapters ?? []) {
+    if (shots.some((s) => (s.transition === "flash" || s.transition === "dip") && Math.abs(s.at - c.at) < 0.15)) continue; // Übergang knallt schon
+    add({ sound: "whoosh", from: c.at - 0.25, volume: 0.3, rate: 0.8, tag: "kapitel" });
+    add({ sound: "impact", from: c.at, volume: 0.3, rate: 1.25, tag: "kapitel" });
+  }
+
   // 4. Untertitel + Hook
   if (cfg.captions) for (const c of ep.captions) add({ sound: "pop", from: c.at, volume: 0.12, rate: vary(c.at, 0.9, 1.15), tag: "untertitel" });
   add({ sound: "whoosh", from: 0, volume: 0.35, rate: 0.9, tag: "hook" });
@@ -141,13 +148,13 @@ export function buildVoices(ep: Episode, fps = 30): Voice[] {
   const at = ep.coldOpen.at, endCo = at + co;
   const cold: Voice[] = [];
   for (const x of main) {
-    if (x.tag === "untertitel" || x.tag === "tick" || x.tag === "hook" || x.tag === "meilenstein") continue;
+    if (x.tag === "untertitel" || x.tag === "tick" || x.tag === "hook" || x.tag === "meilenstein" || x.tag === "kapitel") continue;
     const xEnd = x.dur != null ? x.from + x.dur : Infinity;
     if (x.loop && x.from <= at && xEnd > at) cold.push({ ...x, from: 0, dur: Math.min(xEnd, endCo) - at + 0.1, fadeIn: 0, fadeOut: 0.12 });
     else if (!x.loop && x.from >= at - 0.05 && x.from < endCo - 0.1) cold.push({ ...x, from: Math.max(0, x.from - at), dur: endCo - Math.max(x.from, at) + 0.12, fadeIn: 0, fadeOut: 0.12, tag: "cold" });
   }
-  cold.push({ sound: "impact", from: 0, volume: 0.45, rate: 1, loop: false, fadeIn: 0, fadeOut: 0, tag: "cold" });
-  cold.push({ sound: "boom", from: 0, volume: 0.35, rate: 1.1, loop: false, fadeIn: 0, fadeOut: 0.15, dur: co + 0.15, tag: "cold" });
+  cold.push({ sound: "impact", from: 0, volume: 0.35, rate: 1, loop: false, fadeIn: 0, fadeOut: 0, tag: "cold" });
+  cold.push({ sound: "boom", from: 0, volume: 0.25, rate: 1.1, loop: false, fadeIn: 0, fadeOut: 0.15, dur: co + 0.15, tag: "cold" });
   cold.push({ sound: "swoosh_down", from: Math.max(0, co - 0.45), volume: 0.5, rate: 1.5, loop: false, fadeIn: 0, fadeOut: 0, tag: "rückspulen" });
   cold.push({ sound: "glitch", from: Math.max(0, co - 0.2), volume: 0.4, rate: 1.2, loop: false, fadeIn: 0, fadeOut: 0, tag: "rückspulen" });
   return [...cold, ...main.map((x) => ({ ...x, from: x.from + co }))];

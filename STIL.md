@@ -26,6 +26,12 @@ Alles hier ist in `src/style/theme.ts` als Code hinterlegt. Änderst du dort etw
 - **Untertitel**: mittig, y ≈ 1120 px, 58 px, max. 2 Zeilen, Breite ≤ 820 px.
 - Unten 420 px und rechts 140 px frei.
 
+## POV-Look (Standard)
+- Ego-Kamera auf 1,62 m, fov 60–66, leichtes Atmen; beim Rennen Schritt-Wippen (`pov(..., { run: true })` in asteroid-pov).
+- Deine Arme/Hände (`EgoRig`): graue Ärmel, kommen von unten ins Bild; Handy in der Hand zeigt echte UI (`Phone` aus koma/world).
+- Kapitel-Karten: Inter 900, weiß, mittig über den Untertiteln, schlagen rein (Skalierung + Unschärfe) mit dumpfem Knall.
+- Akzent **Rot** (`COLOR.warn`) für Gefahr; Mint nur noch für ruhige Staun-Videos.
+
 ## Maskottchen „Max“
 Blockiger Low-poly-Typ: gelbe Mütze, grüner Hoodie, blaue Jeans, weiße Sneaker, große dunkle Augen.
 Posen: `idle, walk, run, wave, lookUp, press, sit, fall, shock, dig, swim, float`.

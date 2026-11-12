@@ -99,6 +99,44 @@ export const beschleunigen: Episode = {
     { at: SIT_AT, text: "Den Bus hat er trotzdem verpasst.", italic: true },
   ],
 
+  // ── Englische Fassung (gleiche Animation; Composition „<Id>-EN“) ──
+  sceneText: true, // Busanzeige „42 Station“
+  en: {
+    title: "What if you never stopped accelerating?",
+    hook: { text: "What if you never stopped accelerating?", highlight: ["accelerating?"] },
+    hud: [
+      { label: "Speed", compare: ["Jogging to the bus", "Faster than Usain Bolt", "Faster than a bullet train", "Sound barrier!", "Faster than a bullet", "Orbital velocity", "Escape velocity", "Faster than any space probe"], pill: "×2 speed in {s} s", secondary: "Distance" },
+      { label: "Speed · % light speed", compare: ["1% of light speed", "Light turns blue", "Half the speed of light", "It can't go any faster"], pill: "×2 speed in {s} s", secondary: "Distance" },
+      { label: "Time on Earth", compare: ["For Max, time almost stops", "One year gone", "Everyone he knows: long gone", "The Sun: a red giant"], secondary: "Time for Max" },
+    ],
+    captions: [
+      "Max misses the bus.",
+      { text: "He runs. Twice as fast every second.", highlight: ["Twice", "as", "fast"] },
+      { text: "The bus? Overtaken.", highlight: ["Overtaken."] },
+      { text: "300 km/h. The bullet train? Passed.", highlight: ["Passed."] },
+      { text: "BOOM. The sound barrier.", highlight: ["BOOM."] },
+      "Faster than a bullet.",
+      { text: "The air glows. His shoes are smoking.", highlight: ["glows."] },
+      "7.9 km/s: Earth curves away.",
+      { text: "Max lifts off.", highlight: ["lifts", "off."] },
+      "Let's zoom out. Bye, Earth.",
+      "Faster than any space probe.",
+      "He's running in a vacuum. Don't ask.",
+      { text: "1% of the speed of light.", highlight: ["1%"] },
+      "Around the Earth? 3 seconds.",
+      { text: "The light ahead of him turns blue.", highlight: ["blue."] },
+      "The Moon…",
+      { text: "…zip, gone.", highlight: ["gone."] },
+      "99%… 99.9%… 99.99%…",
+      { text: "He'll never catch the light.", highlight: ["never"] },
+      { text: "But on Earth, time races.", highlight: ["races."] },
+      "Years… millennia… millions of years…",
+      { text: "Max turns back. 5 billion years later.", highlight: ["5", "billion", "years"] },
+      "He still missed the bus.",
+    ],
+    upload: { caption: "What if you never stopped accelerating? 🏃💨 At which second would you have hit the brakes?", hashtags: ["#whatif", "#simulation", "#speedoflight", "#physics", "#3danimation", "#fyp"] },
+  },
+
   shots: [
     // ── Alltag ──
     { at: 0, name: "Bus fährt weg", ambience: "amb_city", render: (s) => <GroundRun shot={s} scenery="town" cam={move([0.4, 1.9, 4.5], [0.5, 1.6, 3.4], [-0.2, 1.3, -8], [-0.1, 1.2, -8], 50)} expression="shock" /> },

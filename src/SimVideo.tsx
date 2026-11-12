@@ -1,7 +1,8 @@
 import React from "react";
 import { AbsoluteFill, Audio, OffthreadVideo, Sequence, staticFile, useCurrentFrame, useVideoConfig, interpolate } from "remotion";
 import type { Episode } from "./types";
-import { Hook, Captions } from "./overlay/Text";
+import { Hook, Captions, Chapters } from "./overlay/Text";
+import { COLOR } from "./style/theme";
 import { Hud } from "./overlay/Hud";
 import { Grade, TransitionFx } from "./overlay/Grade";
 import { SoundLayer } from "./audio/SoundLayer";
@@ -62,6 +63,7 @@ export const SimVideo: React.FC<{ episode: Episode; layers?: "all" | "scene" | "
   setLang(langOfId(id));
   const coF = Math.round(coldOpenDur(episode) * fps);
   const shots = episode.shots;
+  const accent = episode.accent === "red" ? COLOR.warn : COLOR.accent;
   const scene = layers !== "text";
   const text = layers !== "scene";
   return (
@@ -82,10 +84,11 @@ export const SimVideo: React.FC<{ episode: Episode; layers?: "all" | "scene" | "
           s.transition === "flash" || s.transition === "dip" ? <TransitionFx key={k} at={Math.round(s.at * fps)} kind={s.transition} /> : null
         )}
         {text && episode.hud && (Array.isArray(episode.hud) ? episode.hud : [episode.hud]).map((h, k) => <Hud key={k} hud={h} />)}
-        {text && <Captions captions={episode.captions} duration={episode.duration} />}
+        {text && episode.chapters && <Chapters chapters={episode.chapters} />}
+        {text && <Captions captions={episode.captions} duration={episode.duration} accent={accent} />}
       </Sequence>
       {scene && coF > 0 && <RewindFx at={coF} />}
-      {text && <Hook hook={episode.hook} extra={coF / fps} />}
+      {text && <Hook hook={episode.hook} extra={coF / fps} accent={accent} />}
       {scene && <SoundLayer episode={episode} />}
       {scene && episode.music && <Audio src={staticFile(episode.music.src)} volume={episode.music.volume ?? 0.8} />}
     </AbsoluteFill>

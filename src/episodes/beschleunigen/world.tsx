@@ -11,6 +11,7 @@ import {
   Stage, Camera, Box, Flat, Glass, Glow, Max, Car, House, Tree, Bush, Rock, SkyDome, Cloud, Stars, Earth, Moon, SunGlow,
   Particles, PlasmaShell, ShockRing, type Pose,
 } from "../../three/kit";
+import { t as tr } from "../../lib/i18n";
 import { V, X, EARTH_TIME, T_SOUND, T_ORBIT } from "./metric";
 
 const wrap = (v: number, size: number) => ((((v + size / 2) % size) + size) % size) - size / 2;
@@ -48,7 +49,7 @@ export const Bus: React.FC<{ position?: Vec3; wheelSpin?: number }> = ({ positio
     () => canvasTex(256, 64, (g) => {
       g.fillStyle = "#111418"; g.fillRect(0, 0, 256, 64);
       g.fillStyle = "#FFB547"; g.font = `700 40px ${FONT.sans}, sans-serif`; g.textBaseline = "middle";
-      g.fillText("42  Bahnhof", 14, 34);
+      g.fillText(tr("42  Bahnhof", "42  Station"), 14, 34);
     }),
     []
   );

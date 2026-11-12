@@ -72,6 +72,35 @@ export const wachsen: Episode = {
     { at: 33.2, text: "Schon wieder Kopf gestoßen.", italic: true },
   ],
 
+  // ── Englische Fassung (gleiche Animation; Composition „<Id>-EN“) ──
+  en: {
+    title: "What if you never stopped growing?",
+    hook: { text: "What if you never stopped growing?", highlight: ["never", "stopped"] },
+    hud: [
+      { label: "Height", compare: ["Totally normal guy", "Too big for the room", "Bigger than a house", "Bigger than a blue whale", "Bigger than the Statue of Liberty", "Taller than the Eiffel Tower", "Bigger than any building", "Head in the clouds", "Taller than Everest", "At cruising altitude"], pill: "×2 size in {s} s", secondary: "Shoe size (EU)" },
+    ],
+    captions: [
+      "Max just won't stop growing.",
+      "The neighbors are… concerned.",
+      { text: "Every 2.5 seconds: twice as big.", highlight: ["twice", "as", "big."] },
+      "The trees? Just shrubs now.",
+      { text: "Good morning, 10th floor.", highlight: ["10th"] },
+      "The skyscrapers: hip-high.",
+      "The birds are confused.",
+      "Up ahead: the TV tower…",
+      { text: "…passed.", highlight: ["…passed."] },
+      { text: "Shoe size: over 10,000.", highlight: ["10,000."] },
+      "Bigger than any building on Earth.",
+      { text: "Head in the clouds. Literally.", highlight: ["Literally."] },
+      "Good thing he wears a beanie.",
+      { text: "Up there: minus 20 degrees.", highlight: ["minus", "20", "degrees."] },
+      { text: "Taller than Mount Everest.", highlight: ["Everest."] },
+      { text: "BONK.", highlight: ["BONK."] },
+      "Bumped his head again.",
+    ],
+    upload: { caption: "What if you never stopped growing? 📏🚀 At what size would you get scared?", hashtags: ["#whatif", "#simulation", "#giant", "#science", "#3danimation", "#fyp"] },
+  },
+
   shots: [
     // ── 1 Alltag ──
     {
