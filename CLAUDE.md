@@ -38,12 +38,14 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 ## Ablauf bei „/video <Idee>“ (oder jeder Videoidee)
 
 1. **Konzept (im Kopf, kurz ausgeben):** Prämisse als Frage, Format A (Exponential) oder B (Zeitsprung),
-   die Regel (z. B. „×2 alle 2 s“), Start im Alltag, Ende im Extremen, **Twist/Pointe** für die letzten 4–6 s.
+   die Regel (z. B. „×2 alle 2 s“), Start im Alltag, Ende im Extremen, **Twist/Pointe** für die letzten 4–5 s,
+   **Cold-Open-Moment** (spektakulärstes Bild des Videos). **Länge aktuell 30–40 s** (siehe REZEPT.md §2/§4).
 2. **Zahlen zuerst:** `metric.ts` der Episode schreiben. Meilenstein-Zeiten mit `solveTime()` berechnen
    (oder kurz per `node -e` / Python nachrechnen). Fakten müssen stimmen (Eiffelturm 330 m, Everest 8.849 m,
    ISS 408 km, Schall 343 m/s, Mond 384.400 km, Haar 70 µm, Bakterie 2 µm, Atom 0,1 nm …).
-3. **Beat-Sheet:** 25–30 Untertitel, alle 1,5–2,5 s, je ≤ 8 Wörter; 18–24 Shots à 2–4 s; 5 Phasen
-   (Alltag → Meilensteine → Wissen → Extrem → Payoff) wie in `REZEPT.md`. Mindestens 3 Perspektiven,
+3. **Beat-Sheet:** 14–18 Untertitel, alle 1,5–2,5 s, je ≤ 8 Wörter; 10–14 Shots à 2–3 s; 5 Phasen
+   (Alltag max. 3 s → Meilensteine → Wissen → Extrem → Payoff) wie in `REZEPT.md`. Erster Wow-Moment ≤ 3 s.
+   `coldOpen: { at, dur: 1.0 }` setzen (Pflicht). Mindestens 3 Perspektiven,
    2 Zoom-out-Momente, Farbwelt wechselt pro Phase. Untertitel-Timing = HUD-Timing (Vergleiche passen zur Zahl).
 4. **Szenen bauen:** Kit wiederverwenden. Fehlt etwas (z. B. Vulkan, U-Bahn, Wal), **neues Bauteil** in
    `src/three/kit/` (allgemein wiederverwendbar) oder in `episodes/<slug>/world.tsx` (episodenspezifisch) schreiben.
@@ -67,7 +69,7 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 
 ## Qualitäts-Checkliste (jede Vorschau dagegen prüfen)
 
-- [ ] Frame 0: Szene läuft schon, Hook gut lesbar, Schlüsselwort in Mint, Figur erkennbar.
+- [ ] Frame 0 = Cold Open: Höhepunkt-Bild + fetter Hook voll sichtbar, Schlüsselwort in Mint. Danach Max groß, erster Wow ≤ 3 s.
 - [ ] HUD-Zahl tickt jeden Frame, Einheit wechselt sauber, Vergleiche passen zur Zahl.
 - [ ] Kein Shot länger als 4 s, kein Standbild; Kamera bewegt sich immer.
 - [ ] Jede Szene hat Tiefe: Vordergrund-Objekt, Mittelgrund (Max), Hintergrund (Himmel/Welt), Partikel.
@@ -75,7 +77,8 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 - [ ] Text nie in Sicherheitszonen (oben 160 px, unten 420 px, rechts 140 px), nie über Max' Gesicht.
 - [ ] Farbwelt wechselt über die Phasen, aber jede Szene nutzt nur 3–5 Hauptfarben aus `PALETTE`.
 - [ ] Ton: jede Szene hat Atmo, jede Aktion ihren Sound, Höhepunkt am lautesten, Spitze ≤ -1 dBFS.
-- [ ] Pointe am Ende sitzt; Video endet direkt danach (kein Abspann). Länge 61–65 s.
+- [ ] Pointe am Ende sitzt; Video endet direkt danach (kein Abspann). Länge 30–40 s inkl. Cold Open
+      (später, im Creator-Programm: 61–65 s).
 
 ## Harte Regeln (sonst kaputte Renders)
 

@@ -7,6 +7,7 @@ import path from "node:path";
 import { execFileSync, spawnSync } from "node:child_process";
 import { EPISODES } from "../src/episodes";
 import { buildVoices, voiceGain } from "../src/audio/sfx";
+import { totalDuration } from "../src/lib/episode";
 
 const args = process.argv.slice(2);
 const id = args.find((a) => !a.startsWith("--"));
@@ -27,7 +28,7 @@ function load(name: string): [Float32Array, Float32Array] {
   return [L, R];
 }
 
-const total = Math.round(ep.duration * SR);
+const total = Math.round(totalDuration(ep) * SR);
 const L = new Float32Array(total), R = new Float32Array(total);
 const voices = buildVoices(ep, 30);
 for (const v of voices) {
@@ -70,7 +71,7 @@ console.log(`\nSpitze vor Limiter: ${(20 * Math.log10(peak || 1e-9)).toFixed(1)}
 if (hot.length) console.log(`Zu laut bei: ${[...new Set(hot)].join(", ")} s → dort Lautstärken senken`);
 
 // Wellenform-Bild mit Sekundenraster
-execFileSync("ffmpeg", ["-v", "error", "-y", "-i", wav, "-filter_complex", `showwavespic=s=2400x300:split_channels=0:colors=#6FF2D0,drawgrid=w=${2400 / ep.duration * 5}:h=300:color=white@0.25`, "-frames:v", "1", `out/${ep.id}_ton.png`]);
+execFileSync("ffmpeg", ["-v", "error", "-y", "-i", wav, "-filter_complex", `showwavespic=s=2400x300:split_channels=0:colors=#6FF2D0,drawgrid=w=${2400 / totalDuration(ep) * 5}:h=300:color=white@0.25`, "-frames:v", "1", `out/${ep.id}_ton.png`]);
 const eb = spawnSync("ffmpeg", ["-nostats", "-i", wav, "-af", "ebur128", "-f", "null", "-"], { encoding: "utf8" }).stderr;
 const lufs = /I:\s+(-?[0-9.]+) LUFS/.exec(eb.slice(eb.lastIndexOf("Summary")))?.[1];
 console.log(`Lautheit (integriert): ${lufs} LUFS  (Ziel nur SFX: ca. -20 … -16, Musik kommt dazu)`);
