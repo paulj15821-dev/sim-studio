@@ -9,6 +9,7 @@ export * from "./Space";
 export * from "./Particles";
 export * from "./Micro";
 export * from "./Impact";
+export * from "./Animals";
 export {
   Room, Bed, Table, CeilingLight, Door, Shelf,
 } from "./Interior";

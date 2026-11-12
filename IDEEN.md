@@ -36,3 +36,4 @@ Einfach `/video` + Zeile kopieren. Alle sind eigene Prämissen – nicht von den
 | 25 | Was wäre, wenn der Mond doppelt so nah wäre? | Tage | Flut im Wohnzimmer, Mond-Selfie | offen |
 
 ## Neue Ideen (von /ideen)
+| – | Was wäre, wenn alle Menschen auf einmal verschwinden? | Jahre ohne Menschen | Anzeige: Bus kommt in 2 min – nach 10.000 Jahren | gemacht |

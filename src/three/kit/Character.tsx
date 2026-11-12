@@ -1,6 +1,18 @@
 import React from "react";
 import { PALETTE } from "../../style/theme";
-import { Box } from "./materials";
+import { Box as BaseBox } from "./materials";
+
+/** Box-Variante für Geister: transparent + schwaches Mint-Leuchten, keine Schatten. */
+const ghostCache = new Map<number, React.FC<React.ComponentProps<typeof BaseBox>>>();
+function ghostBox(g: number) {
+  const k = Math.round(g * 50) / 50;
+  let B = ghostCache.get(k);
+  if (!B) {
+    B = (p) => <BaseBox {...p} opacity={(p.opacity ?? 1) * (1 - k)} emissive="#6FF2D0" emissiveIntensity={0.35 * Math.min(1, k * 2)} cast={false} />;
+    ghostCache.set(k, B);
+  }
+  return B;
+}
 import { rng } from "../../lib/random";
 import type { Vec3 } from "../../lib/anim";
 
@@ -103,8 +115,12 @@ export const Character: React.FC<{
   hairColor?: string;
   /** Augen geschlossen (Schlaf, Koma) */
   eyesClosed?: boolean;
-}> = ({ outfit = MAX_OUTFIT, pose = "idle", time = 0, speed = 1.1, position = [0, 0, 0], rotationY = 0, rotation, scale = 1, expression = "neutral", hold, joints, beard = 0, hairLong = 0, hairColor, eyesClosed = false }) => {
+  /** Geist-Modus 0..1: halbtransparent mit leichtem Mint-Leuchten (0 = normal). Bei 1 ganz unsichtbar. */
+  ghost?: number;
+}> = ({ outfit = MAX_OUTFIT, pose = "idle", time = 0, speed = 1.1, position = [0, 0, 0], rotationY = 0, rotation, scale = 1, expression = "neutral", hold, joints, beard = 0, hairLong = 0, hairColor, eyesClosed = false, ghost = 0 }) => {
   const j = { ...poseJoints(pose, time, speed), ...joints };
+  if (ghost >= 0.999) return null;
+  const Box = ghost > 0.001 ? ghostBox(ghost) : BaseBox;
   const hc = hairColor ?? outfit.hair ?? "#6B4428";
   const o = outfit;
   const eyeH = eyesClosed ? 0.014 : expression === "shock" ? 0.085 : 0.06;
