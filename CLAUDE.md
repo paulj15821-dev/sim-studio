@@ -2,7 +2,7 @@
 
 Dieses Repo produziert **virale Low-poly-3D-Simulationsvideos** („Was wenn..?“-Format) für TikTok/Shorts.
 Der Nutzer gibt **eine Zeile** (Idee/Prämisse). Du lieferst ein **fertiges MP4** – ohne Rückfragen,
-außer die Idee ist wirklich unverständlich. Sprache aller Texte im Video: **Deutsch**. Musik und ggf. Voice-over fügt der Nutzer selbst hinzu –
+außer die Idee ist wirklich unverständlich. Sprache: **Deutsch + Englisch** – jedes Video gibt es in beiden Sprachen (gleiche Animation, andere Texte). Musik und ggf. Voice-over fügt der Nutzer selbst hinzu –
 **Soundeffekte gehören aber in jedes Video** (siehe „Sound-Design“).
 
 Lies vor der ersten Episode einer Session: `REZEPT.md` (warum es funktioniert) und `STIL.md` (wie es aussieht).
@@ -57,15 +57,24 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
    Automatisch kommen dazu: Whoosh pro Schnitt, Blitz/Einschlag bei `flash`, Sub-Drop bei `dip`, Tick pro
    Verdopplung, Gong pro HUD-Meilenstein, Pop pro Untertitel. Fehlt ein Sound → in `scripts/make-sfx.mjs`
    synthetisieren und in `SFX` (src/audio/sfx.ts) eintragen. **Keine fremden Sounddateien** (Lizenz/Copyright).
+4c. **Englische Fassung (Pflicht):** `en`-Block in der Episode (Titel, Hook, alle Untertitel in gleicher Reihenfolge,
+   HUD-Labels/Vergleiche/Pille, Upload-Text mit englischen Hashtags) – Referenz: `aufzug/index.tsx`. Natürlich
+   formulieren, nicht wörtlich übersetzen (Witz und Länge erhalten). Text **in der 3D-Welt** (Displays, Schilder,
+   Handy-UI) nie hart deutsch: `t("MOND", "MOON")` aus `lib/i18n` und `sceneText: true` setzen. Zahlen immer über
+   `intl()`/`fmt*` (de: 1.873 km · en: 1,873 km). Eigene Formatierer mit Wörtern ebenfalls über `t()`.
+   Ergibt automatisch die Composition `<Id>-EN`.
 5. **Registrieren:** in `src/episodes/index.ts` eintragen. `npm run typecheck` muss sauber sein.
 6. **Prüfen (Pflicht, nicht überspringen):** `npm run preview -- <Id>` → `out/preview/<Id>/sheet.jpg` mit dem
    Read-Tool **ansehen**. Dann 4–6 Schlüsselmomente in voller Größe: `npm run preview -- <Id> --at 1,10,30,58`.
    Checkliste unten abarbeiten, Fehler fixen, erneut prüfen (meist 2–3 Runden).
+   Englisch: `npm run preview -- <Id>-EN --at …` – kein deutsches Wort im Bild, Texte passen in die Zeilen.
    **Ton prüfen:** `npm run sfx -- <Id>` → Cue-Liste lesen, `out/<Id>_ton.png` ansehen. Spitze muss ≤ -1 dBFS
    sein, keine „Zu laut bei“-Zeilen (sonst dort Lautstärken senken), Lautheit ca. -20 … -16 LUFS.
-7. **Rendern:** `npm run render -- <Id>` → `out/<Id>.mp4`. Danach mit ffprobe Dauer/Auflösung prüfen.
-8. **Ausliefern:** MP4 nach `renders/<Id>.mp4` kopieren, committen und pushen (der Nutzer lädt es über GitHub
-   herunter, auch am iPad). Dazu Upload-Text aus `episode.upload` + beste Posting-Zeit ausgeben.
+7. **Rendern:** `npm run render -- <Id>` → `out/<Id>.mp4` **und** `out/<Id>-EN.mp4`. Die 3D-Szene wird dabei nur
+   einmal gerendert, die Texte pro Sprache darübergelegt (+ ~3 % Zeit pro Sprache). Danach mit ffprobe prüfen.
+8. **Ausliefern:** beide MP4 nach `renders/<Id>.mp4` und `renders/<Id>-EN.mp4` kopieren, committen und pushen (der Nutzer lädt es über GitHub
+   herunter, auch am iPad). Dazu Upload-Texte (deutsch aus `episode.upload`, englisch aus `episode.en.upload`)
+   + beste Posting-Zeiten ausgeben.
 
 ## Qualitäts-Checkliste (jede Vorschau dagegen prüfen)
 
@@ -115,4 +124,7 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 
 ## Posting-Infos (bei jeder Auslieferung mitgeben)
 - Titel/Caption aus `episode.upload`, 3–6 Hashtags, Frage an die Zuschauer als Kommentar-Trigger.
-- Beste Zeiten (DE, Erfahrungswerte): Di–Do 18–21 Uhr, Sa/So 11–13 Uhr. Erste Stunde: auf Kommentare antworten.
+- Beste Zeiten (DE, Erfahrungswerte): täglich 7:30, 12:30, 16:30, 19:00 (Sa/So 1–2 h später), ≥ 3 h Abstand.
+  Erste Stunde: auf Kommentare antworten.
+- Englische Accounts (Publikum v. a. USA): ca. 0:00–2:00, 14:00–16:00 und 18:00–19:00 deutscher Zeit
+  (= abends/mittags/morgens an der US-Ostküste). Wenn nachts unpraktisch: Planen-Funktion der App nutzen.

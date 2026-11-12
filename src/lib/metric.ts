@@ -1,3 +1,4 @@
+import { intl, t } from "./i18n";
 // Metrik-Engine: Wachstumsfunktionen, Einheiten-Leitern, deutsches Zahlenformat.
 
 // ───────────── Wachstum ─────────────
@@ -41,7 +42,7 @@ export function solveTime(f: (t: number) => number, target: number, t0 = 0, t1 =
 // ───────────── Format ─────────────
 
 const nf = (digits: number) =>
-  new Intl.NumberFormat("de-DE", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  intl({ minimumFractionDigits: digits, maximumFractionDigits: digits });
 
 /** < 10 → 1 Nachkommastelle, sonst ganze Zahl mit Tausenderpunkten */
 export function num(v: number) {
@@ -70,7 +71,7 @@ export const fmtLength = (m: number) =>
     { f: 1e-2, s: "cm" },
     { f: 1, s: "m" },
     { f: 1e3, s: "km" },
-    { f: 1e9, s: "Mio. km" },
+    { f: 1e9, s: t("Mio. km", "M km") },
   ]);
 
 const C = 299_792_458;
@@ -79,7 +80,7 @@ export const fmtSpeed = (ms: number) => {
   if (ms >= 0.01 * C) {
     const p = (ms / C) * 100;
     const digits = p >= 99 ? 3 : p < 10 ? 2 : 1;
-    return `${nf(digits).format(Math.min(p, 99.9999))} % Lichtgeschw.`;
+    return `${nf(digits).format(Math.min(p, 99.9999))} ${t("% Lichtgeschw.", "% light speed")}`;
   }
   return `${num(ms * 3.6)} km/h`;
 };
@@ -87,19 +88,19 @@ export const fmtSpeed = (ms: number) => {
 /** Zeit in Sekunden → s, Min., Std., Tage, Jahre */
 export function fmtDuration(s: number) {
   const Y = 365.25 * 86400;
-  if (s < 60) return `${Math.floor(s)} ${Math.floor(s) === 1 ? "Sekunde" : "Sekunden"}`;
-  if (s < 3600) { const v = Math.floor(s / 60); return `${v} ${v === 1 ? "Minute" : "Minuten"}`; }
-  if (s < 86400) { const v = Math.floor(s / 3600); return `${v} ${v === 1 ? "Stunde" : "Stunden"}`; }
-  if (s < Y) { const v = Math.floor(s / 86400); return `${nf(0).format(v)} ${v === 1 ? "Tag" : "Tage"}`; }
+  if (s < 60) return `${Math.floor(s)} ${Math.floor(s) === 1 ? t("Sekunde", "second") : t("Sekunden", "seconds")}`;
+  if (s < 3600) { const v = Math.floor(s / 60); return `${v} ${v === 1 ? t("Minute", "minute") : t("Minuten", "minutes")}`; }
+  if (s < 86400) { const v = Math.floor(s / 3600); return `${v} ${v === 1 ? t("Stunde", "hour") : t("Stunden", "hours")}`; }
+  if (s < Y) { const v = Math.floor(s / 86400); return `${nf(0).format(v)} ${v === 1 ? t("Tag", "day") : t("Tage", "days")}`; }
   const v = Math.floor(s / Y);
-  return `${nf(0).format(v)} ${v === 1 ? "Jahr" : "Jahre"}`;
+  return `${nf(0).format(v)} ${v === 1 ? t("Jahr", "year") : t("Jahre", "years")}`;
 }
 
 /** Ganze Zahlen (Personen, Sprünge …) */
 export const fmtCount = (v: number) => {
   const a = Math.abs(v);
-  if (a >= 1e9) return `${nf(a >= 1e10 ? 0 : 1).format(v / 1e9)} Mrd.`;
-  if (a >= 1e6) return `${nf(a >= 1e7 ? 0 : 1).format(v / 1e6)} Mio.`;
+  if (a >= 1e9) return `${nf(a >= 1e10 ? 0 : 1).format(v / 1e9)} ${t("Mrd.", "B")}`;
+  if (a >= 1e6) return `${nf(a >= 1e7 ? 0 : 1).format(v / 1e6)} ${t("Mio.", "M")}`;
   return nf(0).format(Math.round(v));
 };
 

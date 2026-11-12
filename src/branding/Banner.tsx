@@ -5,11 +5,13 @@ import React from "react";
 import { AbsoluteFill } from "remotion";
 import { Stage, Camera, Max, Stars, Earth, Moon, SunGlow } from "../three/kit";
 import { COLOR, FONT } from "../style/theme";
-import { QuestionMark } from "./ProfilePic";
+import { QuestionMark, TITLE, type Lang } from "./ProfilePic";
 
 export const SAFE = { x: 507, y: 508, w: 1546, h: 423 };
 
-export const Banner: React.FC<{ showSafe?: boolean }> = ({ showSafe = false }) => (
+const TAGLINE: Record<Lang, [string, string]> = { de: ["3D-Simulationen", "jeden Tag neu"], en: ["3D simulations", "new every day"] };
+
+export const Banner: React.FC<{ showSafe?: boolean; lang?: Lang }> = ({ showSafe = false, lang = "de" }) => (
   <AbsoluteFill style={{ background: "#04060E" }}>
     <Stage preset="space" bg="#04060E" fog={null} sunDir={[-2, 1.2, 2.4]} sunIntensity={3.2} shadows={false} bloom={0.25} envIntensity={0.5}>
       <Camera pos={[0, 0, 10]} look={[0, 0, 0]} fov={40} near={0.05} far={50000} />
@@ -29,10 +31,10 @@ export const Banner: React.FC<{ showSafe?: boolean }> = ({ showSafe = false }) =
     {/* Titel + Untertitel im sicheren Bereich, rechts von Max */}
     <div style={{ position: "absolute", left: SAFE.x + 470, top: SAFE.y + 52, width: SAFE.w - 520, color: "#FFFFFF", textShadow: "0 6px 30px rgba(0,0,0,0.65)" }}>
       <div style={{ fontFamily: FONT.serif, fontSize: 210, lineHeight: 0.95, letterSpacing: "-0.015em" }}>
-        Was wenn<span style={{ color: COLOR.accent }}>..?</span>
+        {TITLE[lang]}<span style={{ color: COLOR.accent }}>..?</span>
       </div>
       <div style={{ fontFamily: FONT.sans, fontWeight: 600, fontSize: 34, letterSpacing: "0.16em", textTransform: "uppercase", marginTop: 34, opacity: 0.92 }}>
-        3D-Simulationen <span style={{ color: COLOR.accent }}>·</span> jeden Tag neu
+        {TAGLINE[lang][0]} <span style={{ color: COLOR.accent }}>·</span> {TAGLINE[lang][1]}
       </div>
     </div>
     {showSafe && <div style={{ position: "absolute", left: SAFE.x, top: SAFE.y, width: SAFE.w, height: SAFE.h, border: "4px dashed #FF6B5B" }} />}

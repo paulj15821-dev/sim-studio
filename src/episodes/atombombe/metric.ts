@@ -1,4 +1,5 @@
 import { logKeys, solveTime } from "../../lib/metric";
+import { intl } from "../../lib/i18n";
 
 // Fakten (gerundet, nach Glasstone/Dolan „The Effects of Nuclear Weapons“ bzw. NUKEMAP-Größenordnungen):
 //  Sprengkopf: 800 kt (typischer strategischer Sprengkopf) = 53 × Hiroshima (15 kt)
@@ -53,7 +54,7 @@ const two = (n: number) => String(Math.floor(n)).padStart(2, "0");
 export const CLOCK = (t: number) => START_CLOCK + t;
 export const fmtClock = (s: number) => `${two(s / 3600)}:${two((s % 3600) / 60)}:${two(s % 60)}`;
 
-const nf = (d: number) => new Intl.NumberFormat("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const nf = (d: number) => intl({ minimumFractionDigits: d, maximumFractionDigits: d });
 /** 0,001 s → 4,2 s → 27 s → 12:30 Min. */
 export const fmtSince = (s: number) => {
   if (s < 0.1) return `${nf(3).format(s)} s`;

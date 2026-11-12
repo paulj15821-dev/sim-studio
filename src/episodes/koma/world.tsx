@@ -14,6 +14,7 @@ import {
   SkyDome, Stars, Particles, Cloud, type Pose, type Outfit, type Joints,
 } from "../../three/kit";
 import { years } from "./metric";
+import { intl } from "../../lib/i18n";
 
 export type Cam = { pos: Vec3; look: Vec3; fov?: number; roll?: number };
 export type CamFn = (c: { t: number; local: number; p: number }) => Cam;
@@ -82,7 +83,7 @@ function drawPhone(g: CanvasRenderingContext2D, ui: PhoneUI, time: number) {
     }
     if (ui.more) {
       g.textAlign = "center"; g.fillStyle = "#FFFFFF"; g.font = "700 26px Inter, sans-serif";
-      g.fillText(`+ ${new Intl.NumberFormat("de-DE").format(ui.more)} weitere`, CW / 2, y + 40);
+      g.fillText(`+ ${intl().format(ui.more)} weitere`, CW / 2, y + 40);
     }
     if (ui.battery != null) {
       g.strokeStyle = "#FFFFFF"; g.lineWidth = 3; rr(g, CW - 74, 22, 44, 22, 6); g.stroke();

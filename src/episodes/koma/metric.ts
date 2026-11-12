@@ -1,4 +1,5 @@
 import { logKeys, solveTime } from "../../lib/metric";
+import { intl } from "../../lib/i18n";
 
 // Fakten (gerundet):
 //  Herz ~70 Schläge/min → ~100.000 pro Tag, 10 Jahre ≈ 368 Mio., 30 Jahre ≈ 1,1 Mrd.
@@ -48,7 +49,7 @@ export const AWAKE = (t: number) => Math.max(0, t - WAKE);
 /** Videosekunde, zu der x Jahre erreicht sind */
 export const atYears = (y: number) => solveTime(COMA, y * Y, CRASH, WAKE);
 
-const nf = (d: number) => new Intl.NumberFormat("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const nf = (d: number) => intl({ minimumFractionDigits: d, maximumFractionDigits: d });
 const one = (v: number) => (v < 10 ? nf(1).format(Math.floor(v * 10) / 10) : nf(0).format(Math.floor(v)));
 
 /** Koma-Dauer: 8,3 Sekunden → 14 Minuten → 3,2 Stunden → 6,4 Tage → 4,1 Monate → 27 Jahre */
