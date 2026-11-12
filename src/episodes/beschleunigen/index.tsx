@@ -5,12 +5,14 @@ import React from "react";
 import type { Episode } from "../../types";
 import { clamp } from "../../lib/anim";
 import { C_LIGHT, fmtLength } from "../../lib/metric";
-import { GroundRun, SpaceRun, TimeLapse, Finale, move } from "./world";
+import { GroundRun, SpaceRun, TimeLapse, Finale, move, MOON_X, MOON_Y } from "./world";
 import { V, X, EARTH_TIME, EARTH_END, TURN, T_SOUND, T_ORBIT, T_1PCT, T_MOON, fmtV, fmtEarth, fmtSec } from "./metric";
 
 const C = C_LIGHT;
 const HUD_SWITCH = 29.6; // Tempo → Erdzeit
 const SIT_AT = 34.3;
+const MOON_PASS = (T_MOON - 25) / 2;
+const moonZ = (p: number) => (p - MOON_PASS) * 16000;
 
 export const beschleunigen: Episode = {
   id: "Beschleunigen",
@@ -78,7 +80,7 @@ export const beschleunigen: Episode = {
     { at: 4.8, text: "300 km/h. Der ICE? Auch.", highlight: ["ICE?"] },
     { at: T_SOUND, text: "BOOM. Die Schallmauer.", highlight: ["BOOM."] },
     { at: 8.4, text: "Schneller als eine Gewehrkugel." },
-    { at: 9.8, text: "Die Luft glüht. Seine Sneaker auch.", highlight: ["glüht."] },
+    { at: 9.8, text: "Die Luft glüht. Seine Schuhe qualmen.", highlight: ["glüht."] },
     { at: T_ORBIT, text: "7,9 km/s: Die Erde krümmt sich weg." },
     { at: 12.5, text: "Max hebt ab.", highlight: ["hebt", "ab."] },
     { at: 13.6, text: "Zoomen wir raus. Tschüss, Erde." },
@@ -99,28 +101,28 @@ export const beschleunigen: Episode = {
 
   shots: [
     // ── Alltag ──
-    { at: 0, name: "Bus fährt weg", ambience: "amb_city", render: (s) => <GroundRun shot={s} scenery="town" cam={move([5.6, 1.7, -4.6], [4.6, 1.6, -3.2], [-1.6, 1.4, -7], [-1.4, 1.4, -7.5], 50)} expression="shock" /> },
-    { at: 2.3, name: "Bus überholt", ambience: "amb_city", render: (s) => <GroundRun shot={s} scenery="town" cam={move([6.8, 1.5, 2.2], [6.2, 1.4, 0.8], [-1.2, 1.5, -6], [-1.0, 1.4, -5], 48)} expression="happy" /> },
+    { at: 0, name: "Bus fährt weg", ambience: "amb_city", render: (s) => <GroundRun shot={s} scenery="town" cam={move([0.4, 1.9, 4.5], [0.5, 1.6, 3.4], [-0.2, 1.3, -8], [-0.1, 1.2, -8], 50)} expression="shock" /> },
+    { at: 2.3, name: "Bus überholt", ambience: "amb_city", render: (s) => <GroundRun shot={s} scenery="town" cam={move([5.5, 1.5, 1.5], [5.0, 1.4, 0.6], [0.3, 1.3, 0.3], [0.4, 1.3, -0.2], 48)} expression="happy" /> },
     // ── Meilensteine ──
-    { at: 4.0, name: "ICE", ambience: "amb_wind", render: (s) => <GroundRun shot={s} scenery="rail" cam={move([5.5, 2.0, 3.5], [5.0, 1.8, 2.2], [-3.5, 1.8, -6], [-3, 1.6, -5], 46)} expression="happy" /> },
-    { at: 5.8, name: "Vor der Schallmauer", ambience: "amb_wind_strong", render: (s) => <GroundRun shot={s} scenery="country" cam={move([3.6, 0.7, -6.5], [3.0, 0.9, -5.2], [-0.4, 1.2, 0], [-0.2, 1.2, 0], 50)} expression="shock" /> },
-    { at: T_SOUND, transition: "flash", name: "Überschallknall (Drohne)", ambience: "amb_wind_strong", render: (s) => <GroundRun shot={s} scenery="country" cam={move([38, 22, 22], [58, 40, 44], [-8, 0, -24], [-10, 0, -30], 46)} /> },
-    { at: 9.6, name: "Glühen", ambience: "fire", ambienceVolume: 0.45, render: (s) => <GroundRun shot={s} scenery="country" warm={0.7} cam={move([3.4, 1.0, -1.8], [3.6, 1.1, -2.6], [-0.6, 1.1, -0.2], [-0.6, 1.1, -0.6], 46)} expression="shock" /> },
+    { at: 4.0, name: "ICE", ambience: "amb_wind", render: (s) => <GroundRun shot={s} scenery="rail" cam={move([5.0, 1.7, 2.5], [4.6, 1.6, 1.8], [-2, 1.5, -0.5], [-2, 1.5, -0.8], 46)} expression="happy" /> },
+    { at: 5.8, name: "Vor der Schallmauer", ambience: "amb_wind_strong", render: (s) => <GroundRun shot={s} scenery="country" cam={move([3.6, 0.7, -6.5], [3.0, 0.9, -5.2], [1.6, 1.2, 0], [1.5, 1.2, 0], 50)} expression="shock" /> },
+    { at: T_SOUND, transition: "flash", name: "Überschallknall (Drohne)", ambience: "amb_wind_strong", render: (s) => <GroundRun shot={s} scenery="country" cam={move([30, 18, 20], [48, 32, 40], [-2, 0, -8], [-3, 0, -10], 46)} /> },
+    { at: 9.6, name: "Glühen", ambience: "fire", ambienceVolume: 0.45, render: (s) => <GroundRun shot={s} scenery="country" warm={0.7} cam={move([3.4, 1.0, -1.8], [3.6, 1.1, -2.4], [1.0, 1.1, 0.2], [1.0, 1.1, 0], 46)} expression="shock" /> },
     // ── Wissen ──
     { at: T_ORBIT - 0.15, name: "Abheben", ambience: "amb_wind_strong", render: (s) => <GroundRun shot={s} scenery="country" lift warm={0.3} cam={move([4.0, 0.4, 7.5], [5.5, 2.5, 11], [-0.8, 1.0, -4], [-1, -1, -6], 52)} pose="run" /> },
     {
       at: 13.4, transition: "dip", name: "Zoom raus: Erde", ambience: "amb_space",
       render: (s) => <SpaceRun shot={s} units="km" marker cam={({ p }) => ({ pos: [400 + p * 9000, 250 + p * 5000, -900 + p * 21000], look: [0, -800 - p * 4500, 300 + p * 1500], fov: 45 })} />,
     },
-    { at: 15.6, name: "Rennen im All", ambience: "amb_space", render: (s) => <SpaceRun shot={s} cam={move([2.4, 0.4, -4.2], [2.9, 0.7, -5.2], [-0.6, -0.6, 0], [-0.6, -0.9, 0], 48)} /> },
+    { at: 15.6, name: "Rennen im All", ambience: "amb_space", render: (s) => <SpaceRun shot={s} cam={move([2.4, 0.4, -4.2], [2.9, 0.7, -5.2], [-0.4, -0.1, 0], [-0.4, -0.3, 0], 48)} /> },
     { at: 18.6, name: "Erde schrumpft", ambience: "amb_space", render: (s) => <SpaceRun shot={s} cam={move([0.9, 1.5, -6.5], [1.2, 2.0, -9], [-0.9, -1.6, 4], [-1, -2.2, 4], 50)} warp={(t) => clamp((t - 20.5) / 2) * 0.25} /> },
     // ── Extrem ──
-    { at: 22.0, name: "Doppler-Tunnel", ambience: "tension", ambienceVolume: 0.5, render: (s) => <SpaceRun shot={s} noEarth cam={move([1.4, 0.9, 3.6], [1.0, 0.7, 2.6], [-0.6, 0.3, -20], [-0.5, 0.2, -20], 52)} warp={(t) => 0.35 + clamp((t - 22) / 3) * 0.45} /> },
+    { at: 22.0, name: "Doppler-Tunnel", ambience: "tension", ambienceVolume: 0.5, render: (s) => <SpaceRun shot={s} noEarth cam={move([-0.6, 1.2, 3.6], [-0.5, 1.0, 2.8], [0.25, 0.5, -20], [0.2, 0.4, -20], 52)} warp={(t) => 0.35 + clamp((t - 22) / 3) * 0.45} /> },
     {
       at: 25.0, name: "Mond", ambience: "tension", ambienceVolume: 0.6,
-      render: (s) => <SpaceRun shot={s} noEarth cam={move([-1.8, 1.2, 4.2], [-2.0, 1.0, 3.6], [-1.6, 0.4, -12], [-2.4, 0.4, -10], 56)} warp={0.7} moonZ={(p) => (p - (T_MOON - 25) / 2) * 52000} />,
+      render: (s) => <SpaceRun shot={s} noEarth cam={({ p }) => ({ pos: [-3.0, 0.5, -0.4], look: [MOON_X * 1000, MOON_Y * 1000, moonZ(p) * 1000], fov: 56 })} warp={0.7} moonZ={moonZ} />,
     },
-    { at: 27.0, transition: "whip", name: "Lichtmauer", ambience: "tension", ambienceVolume: 0.75, render: (s) => <SpaceRun shot={s} noEarth expression="shock" cam={move([1.3, 0.6, -2.9], [1.1, 0.5, -2.3], [-0.5, 0.35, 0], [-0.45, 0.3, 0], 46)} warp={1} /> },
+    { at: 27.0, transition: "whip", name: "Lichtmauer", ambience: "tension", ambienceVolume: 0.75, render: (s) => <SpaceRun shot={s} noEarth expression="shock" cam={move([-1.2, 0.5, -3.8], [-1.0, 0.45, -3.2], [0.45, 0.1, 0], [0.4, 0.1, 0], 46)} warp={1} /> },
     // ── Payoff ──
     { at: HUD_SWITCH, transition: "flash", name: "Zeitraffer Haltestelle", ambience: "amb_wind", ambienceVolume: 0.4, render: (s) => <TimeLapse shot={s} /> },
     { at: 32.2, transition: "dip", name: "Roter Riese", ambience: "amb_lava", ambienceVolume: 0.45, render: (s) => <Finale shot={s} sitAt={SIT_AT} /> },

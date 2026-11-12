@@ -227,7 +227,8 @@ export const GroundRun: React.FC<GroundProps> = ({ shot, cam, scenery, pose = "r
   // Mach-Kegel + Überschallknall
   const mach = v / 343;
   const cone = clamp(1 - Math.abs(mach - 1) / 0.35) * 0.9;
-  const ringR = t > T_SOUND ? (t - T_SOUND) * 140 : 0;
+  const ringR = t > T_SOUND && t < T_SOUND + 1.6 ? 4 + (t - T_SOUND) * 240 : 0;
+  const ringZ = d - X(T_SOUND);
   const plasma = clamp((t - 9.0) / 1.2) * (lift ? clamp(1 - (t - 12.6) / 1.0) : 1);
   const dustTrail = clamp((v - 150) / 250);
 
@@ -357,11 +358,6 @@ export const GroundRun: React.FC<GroundProps> = ({ shot, cam, scenery, pose = "r
             <meshStandardMaterial color="#FFFFFF" transparent opacity={cone * 0.55} side={THREE.DoubleSide} depthWrite={false} roughness={1} />
           </mesh>
         )}
-        {plasma > 0.01 && (
-          <group position={[0.8, 1.0, 0]} rotation={[0, Math.PI, 0]}>
-            <PlasmaShell position={[0, 0, 0]} radius={1.3} strength={plasma} direction="forward" time={t} />
-          </group>
-        )}
         {/* Staubfahne hinter Max */}
         {dustTrail > 0.01 && (
           <mesh position={[0.8, 0.6, 26]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -370,7 +366,7 @@ export const GroundRun: React.FC<GroundProps> = ({ shot, cam, scenery, pose = "r
           </mesh>
         )}
       </group>
-      {ringR > 0 && ringR < 900 && <ShockRing radius={ringR} width={ringR * 0.08 + 1} color="#FFFFFF" opacity={clamp(1 - ringR / 900) * 0.6} position={[0.8, 1.0, 0]} />}
+      {ringR > 0 && <ShockRing radius={ringR} width={0.1} glow={false} color="#F4F1EA" opacity={clamp(1 - (t - T_SOUND) / 1.6) * 0.55} position={[0.8, 0.4, ringZ]} />}
       {/* Geschwindigkeitsstreifen + Staub */}
       <Particles kind="streaks" n={120} box={[40, 14, 120]} center={[0.8, 3 + ly, -10]} time={t} velocity={[0, 0, Math.min(Math.max(v, 5), 220)]} opacity={clamp(v / 60) * 0.6} seed={7} />
       <Particles kind="dust" n={140} box={[12, 2, 40]} center={[0.8, 0.6, 8]} time={t} velocity={[0, 0.3, Math.min(v, 60)]} opacity={clamp(v / 20) * (1 - clamp(ly / 10)) * 0.9} seed={8} />
@@ -382,6 +378,7 @@ export const GroundRun: React.FC<GroundProps> = ({ shot, cam, scenery, pose = "r
 // ───────────── Weltall (km; Max im Ursprung, im Maßstab 0.001) ─────────────
 
 const R_E = 6371;
+export const MOON_X = 6500, MOON_Y = 900;
 const SUN_SPACE: Vec3 = [-40, 22, -60];
 
 /** 1-px-Linie */
@@ -433,7 +430,7 @@ export const SpaceRun: React.FC<SpaceProps> = ({ shot, cam, units = "m", pose = 
       <Stars n={3000} radius={900_000} opacity={1 - w * 0.5} />
       <SunGlow position={[SUN_SPACE[0] * 9000, SUN_SPACE[1] * 9000, SUN_SPACE[2] * 9000]} size={60000} />
       {!noEarth && <Earth radius={R_E} position={earthC} rotationY={2.2 + t * 0.01} tilt={1.0} detail={6} cloudHeight={0.0016} />}
-      {moonZ && <Moon radius={1737} position={[-3400, 900, moonZ(p)]} />}
+      {moonZ && <Moon radius={1737} position={[MOON_X, MOON_Y, moonZ(p)]} />}
       {marker && (
         <>
           <Line a={[0, -lift, xk]} b={[0, 0, 0]} color={COLOR.accent} opacity={0.9} />
@@ -513,8 +510,8 @@ export const Finale: React.FC<{ shot: ShotInfo; sitAt: number }> = ({ shot, sitA
   const dust = clamp(1 - local / 1.4);
   const sitting = t > sitAt;
   const walk = clamp((t - (sitAt - 0.9)) / 0.8);
-  const camPos = keys3([{ t: 0, v: [5.5, 1.6, 8.5] }, { t: 4, v: [3.6, 1.5, 6.4] }], local);
-  const look = keys3([{ t: 0, v: [-2.2, 1.6, 0.2] }, { t: 4, v: [-4.6, 1.5, 0.6] }], local);
+  const camPos = keys3([{ t: 0, v: [0.6, 1.7, 10.5] }, { t: 4, v: [-3.0, 1.4, 6.2] }], local);
+  const look = keys3([{ t: 0, v: [-2.6, 1.3, 3.6] }, { t: 2.0, v: [-5.0, 1.0, 2.6] }, { t: 4, v: [-6.0, 0.9, 1.8] }], local);
   const r = shake(t, Math.max(0, 0.1 - local * 0.12), 18);
   const sunDir: Vec3 = [-70, 14, -60];
   // Max landet neben dem Schild, geht zur Bank, setzt sich
