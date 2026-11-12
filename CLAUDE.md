@@ -37,7 +37,9 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 
 ## Ablauf bei „/video <Idee>“ (oder jeder Videoidee)
 
-1. **Konzept (im Kopf, kurz ausgeben):** Prämisse als Frage, Format A (Exponential) oder B (Zeitsprung),
+1. **Konzept (im Kopf, kurz ausgeben):** **Standard ist das POV-Format** (`REZEPT.md` §0, Referenz
+   `src/episodes/asteroid-pov/`): du-Perspektive, Hände im Bild, Gefahr ab Sekunde 0–1, Befehle, Kapitel-Karten, Rot.
+   Prämisse als Frage, Format A (Exponential) oder B (Zeitsprung),
    die Regel (z. B. „×2 alle 2 s“), Start im Alltag, Ende im Extremen, **Twist/Pointe** für die letzten 4–5 s,
    **Cold-Open-Moment** (spektakulärstes Bild des Videos). **Länge aktuell 30–40 s** (siehe REZEPT.md §2/§4).
 2. **Zahlen zuerst:** `metric.ts` der Episode schreiben. Meilenstein-Zeiten mit `solveTime()` berechnen
@@ -45,7 +47,9 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
    ISS 408 km, Schall 343 m/s, Mond 384.400 km, Haar 70 µm, Bakterie 2 µm, Atom 0,1 nm …).
 3. **Beat-Sheet:** 14–18 Untertitel, alle 1,5–2,5 s, je ≤ 8 Wörter; 10–14 Shots à 2–3 s; 5 Phasen
    (Alltag max. 3 s → Meilensteine → Wissen → Extrem → Payoff) wie in `REZEPT.md`. Erster Wow-Moment ≤ 3 s.
-   `coldOpen: { at, dur: 1.0 }` setzen (Pflicht). Mindestens 3 Perspektiven,
+   `coldOpen: { at, dur: 1.0 }` setzen (Pflicht). POV: `chapters` (alle 3–6 s), `accent: "red"`, Untertitel in der
+   du-Form mit Befehlen in Gefahrenmomenten, persönliche Folgen statt Statistik, eine Entscheidung zum Streiten.
+   Mindestens 3 Perspektiven,
    2 Zoom-out-Momente, Farbwelt wechselt pro Phase. Untertitel-Timing = HUD-Timing (Vergleiche passen zur Zahl).
 4. **Szenen bauen:** Kit wiederverwenden. Fehlt etwas (z. B. Vulkan, U-Bahn, Wal), **neues Bauteil** in
    `src/three/kit/` (allgemein wiederverwendbar) oder in `episodes/<slug>/world.tsx` (episodenspezifisch) schreiben.
@@ -78,7 +82,9 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 
 ## Qualitäts-Checkliste (jede Vorschau dagegen prüfen)
 
-- [ ] Frame 0 = Cold Open: Höhepunkt-Bild + fetter Hook voll sichtbar, Schlüsselwort in Mint. Danach Max groß, erster Wow ≤ 3 s.
+- [ ] Frame 0 = Cold Open: bedrohlichster Moment aus DEINER Sicht + fetter Hook, Schlüsselwort rot. In Sekunde 0–1
+      passiert schon etwas (Alarm, Verschwinden, Riss) – kein Anlauf.
+- [ ] POV: Ego-Kamera mit Händen im Bild (`EgoRig`), Kapitel-Karten, Befehle („Lauf!“), Max als Begleiter neben dir.
 - [ ] HUD-Zahl tickt jeden Frame, Einheit wechselt sauber, Vergleiche passen zur Zahl.
 - [ ] Kein Shot länger als 4 s, kein Standbild; Kamera bewegt sich immer.
 - [ ] Jede Szene hat Tiefe: Vordergrund-Objekt, Mittelgrund (Max), Hintergrund (Himmel/Welt), Partikel.
@@ -107,10 +113,12 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 - Nach Änderungen an Stage/Kit/Materialien: `npm run preview -- Testbild --at 1,3,5,7` ansehen (Look-Regression).
 
 ## Stil-Regeln
-- Hauptfigur ist immer **Max** (`<Max pose=… />`). Nebenfiguren: `<Person seed>` / `<Crowd>`.
+- Hauptfigur ist **du** (Ego-Kamera + `EgoRig`); **Max** ist immer dabei als dein Freund/Bruder neben dir.
+  Nebenfiguren: `<Person seed>` / `<Crowd>`. (Altes Format „Max von außen“ nur noch, wenn die Idee es verlangt.)
 - Farben aus `PALETTE`, Licht-Presets aus `Stage` (`day, golden, overcast, night, space, interior, underwater, lava, micro`).
-- Untertitel: trocken, knapp, ein bisschen witzig. „…“ verbindet Beats. Zahlen deutsch („1.873 km“, „4,2 m“).
-- Hook-Formel: „Was wäre, wenn [Alltag] [Regel]?“ – max. 12 Wörter, 1 Highlight.
+- Untertitel: du-Form, knapp, ein Bild pro Zeile („Dein Vater ist weg. Sein Hemd hängt noch im Gurt.“), Befehle
+  in Gefahr, trockener Humor zwischendurch. „…“ verbindet Beats. Zahlen deutsch („1.873 km“, „4,2 m“).
+- Hook-Formel: „Was wäre, wenn [Ereignis] [heute/jetzt]?“ oder „POV: [Ereignis]“ – max. 12 Wörter, 1 Highlight (rot).
 
 ## Rendern – Umgebung
 - Cloud ohne GPU (Claude Code im Browser): Standard `GL=swangle` (Software). 62 s ≈ 1.900 Frames → mit dem
