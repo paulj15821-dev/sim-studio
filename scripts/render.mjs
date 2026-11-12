@@ -1,6 +1,6 @@
 // Finales Rendern. Nutzung:
-//   npm run render -- Aufzug              → out/Aufzug.mp4 + out/Aufzug-EN.mp4 (alle Sprachen, die die Episode hat)
-//   npm run render -- Aufzug --lang en    → nur Englisch
+//   npm run render -- Aufzug              → out/Aufzug.mp4 (Deutsch, Standard)
+//   npm run render -- Aufzug --lang en    → nur Englisch · --lang all → beide (falls `en` vorhanden)
 //   npm run render -- Aufzug --draft      → halbe Auflösung, schnell zum Prüfen
 //   npm run render -- Aufzug --single     → klassisch in einem Durchgang (nur Deutsch, ohne Schichten)
 //   GL=angle npm run render -- Aufzug     → auf Rechnern mit GPU (Mac/PC) deutlich schneller
@@ -19,7 +19,7 @@ if (!id) { console.error("Bitte Composition-ID angeben, z. B. npm run render -- 
 const opt = (k, d) => { const i = args.indexOf(`--${k}`); return i >= 0 ? args[i + 1] : d; };
 const draft = args.includes("--draft");
 const single = args.includes("--single");
-const langOpt = opt("lang", "all");
+const langOpt = opt("lang", "de");
 const gl = process.env.GL || "swangle";
 const cpus = os.cpus().length;
 const conc = process.env.CONCURRENCY || String(Math.max(1, Math.min(8, Math.floor(cpus / 2))));

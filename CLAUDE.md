@@ -2,7 +2,7 @@
 
 Dieses Repo produziert **virale Low-poly-3D-Simulationsvideos** („Was wenn..?“-Format) für TikTok/Shorts.
 Der Nutzer gibt **eine Zeile** (Idee/Prämisse). Du lieferst ein **fertiges MP4** – ohne Rückfragen,
-außer die Idee ist wirklich unverständlich. Sprache: **Deutsch + Englisch** – jedes Video gibt es in beiden Sprachen (gleiche Animation, andere Texte). Musik und ggf. Voice-over fügt der Nutzer selbst hinzu –
+außer die Idee ist wirklich unverständlich. Sprache: **Deutsch** (nur Deutsch – keine englische Fassung bauen, außer der Nutzer fragt ausdrücklich). Musik und ggf. Voice-over fügt der Nutzer selbst hinzu –
 **Soundeffekte gehören aber in jedes Video** (siehe „Sound-Design“).
 
 Lies vor der ersten Episode einer Session: `REZEPT.md` (warum es funktioniert) und `STIL.md` (wie es aussieht).
@@ -61,24 +61,17 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
    Automatisch kommen dazu: Whoosh pro Schnitt, Blitz/Einschlag bei `flash`, Sub-Drop bei `dip`, Tick pro
    Verdopplung, Gong pro HUD-Meilenstein, Pop pro Untertitel. Fehlt ein Sound → in `scripts/make-sfx.mjs`
    synthetisieren und in `SFX` (src/audio/sfx.ts) eintragen. **Keine fremden Sounddateien** (Lizenz/Copyright).
-4c. **Englische Fassung (Pflicht):** `en`-Block in der Episode (Titel, Hook, alle Untertitel in gleicher Reihenfolge,
-   HUD-Labels/Vergleiche/Pille, Upload-Text mit englischen Hashtags) – Referenz: `aufzug/index.tsx`. Natürlich
-   formulieren, nicht wörtlich übersetzen (Witz und Länge erhalten). Text **in der 3D-Welt** (Displays, Schilder,
-   Handy-UI) nie hart deutsch: `t("MOND", "MOON")` aus `lib/i18n` und `sceneText: true` setzen. Zahlen immer über
-   `intl()`/`fmt*` (de: 1.873 km · en: 1,873 km). Eigene Formatierer mit Wörtern ebenfalls über `t()`.
-   Ergibt automatisch die Composition `<Id>-EN`.
+4c. **Englisch: nicht machen** (Nutzer bleibt bei Deutsch – spart Zeit/Tokens). Die Technik existiert noch
+   (`en`-Block → `<Id>-EN`, `npm run render -- <Id> --lang en`), nur auf ausdrücklichen Wunsch nutzen.
 5. **Registrieren:** in `src/episodes/index.ts` eintragen. `npm run typecheck` muss sauber sein.
 6. **Prüfen (Pflicht, nicht überspringen):** `npm run preview -- <Id>` → `out/preview/<Id>/sheet.jpg` mit dem
    Read-Tool **ansehen**. Dann 4–6 Schlüsselmomente in voller Größe: `npm run preview -- <Id> --at 1,10,30,58`.
    Checkliste unten abarbeiten, Fehler fixen, erneut prüfen (meist 2–3 Runden).
-   Englisch: `npm run preview -- <Id>-EN --at …` – kein deutsches Wort im Bild, Texte passen in die Zeilen.
    **Ton prüfen:** `npm run sfx -- <Id>` → Cue-Liste lesen, `out/<Id>_ton.png` ansehen. Spitze muss ≤ -1 dBFS
    sein, keine „Zu laut bei“-Zeilen (sonst dort Lautstärken senken), Lautheit ca. -20 … -16 LUFS.
-7. **Rendern:** `npm run render -- <Id>` → `out/<Id>.mp4` **und** `out/<Id>-EN.mp4`. Die 3D-Szene wird dabei nur
-   einmal gerendert, die Texte pro Sprache darübergelegt (+ ~3 % Zeit pro Sprache). Danach mit ffprobe prüfen.
-8. **Ausliefern:** beide MP4 nach `renders/<Id>.mp4` und `renders/<Id>-EN.mp4` kopieren, committen und pushen (der Nutzer lädt es über GitHub
-   herunter, auch am iPad). Dazu Upload-Texte (deutsch aus `episode.upload`, englisch aus `episode.en.upload`)
-   + beste Posting-Zeiten ausgeben.
+7. **Rendern:** `npm run render -- <Id>` → `out/<Id>.mp4`. Danach mit ffprobe Dauer/Auflösung/Ton prüfen.
+8. **Ausliefern:** MP4 nach `renders/<Id>.mp4` kopieren, committen und pushen (der Nutzer lädt es über GitHub
+   herunter, auch am iPad). Dazu Upload-Text aus `episode.upload` + beste Posting-Zeiten ausgeben.
 
 ## Qualitäts-Checkliste (jede Vorschau dagegen prüfen)
 
@@ -130,19 +123,7 @@ Kamera, Überbelichtung) selbstständig reparieren, bevor neue Episoden gebaut w
 - Falls Remotion den Headless-Browser nicht laden kann: Netzwerkzugriff der Umgebung auf „Voll“ stellen
   (Claude Code → Environment-Einstellungen) bzw. `npx remotion browser ensure` ausführen.
 
-## Posting-Infos (bei jeder Auslieferung mitgeben – für BEIDE Sprachen)
-- Pro Sprache: Titel/Caption (`episode.upload` bzw. `episode.en.upload`), 3–6 Hashtags, Frage an die Zuschauer
-  als Kommentar-Trigger. Als zwei klar getrennte, kopierfertige Blöcke ausgeben (🇩🇪 / 🇺🇸🇬🇧).
-- Dazu diese Posting-Tabelle (alle Zeiten in **deutscher Zeit**; EN-Publikum v. a. USA-Ostküste + UK):
-
-  | Slot | 🇩🇪 Mo–Fr | 🇺🇸🇬🇧 Mo–Fr | 🇩🇪 Sa/So | 🇺🇸🇬🇧 Sa/So |
-  |---|---|---|---|---|
-  | 1 | 7:30 | 13:30 | 10:00 | 16:00 |
-  | 2 | 12:30 | 19:00 | 13:00 | 19:30 |
-  | 3 | 16:30 | 22:00 | 17:00 | 23:00 |
-  | 4 | 19:00 | 1:30 (planen) | 20:30 | 2:30 (planen) |
-
-  Nur 1–2 Posts/Tag: DE 12:30 + 19:00 · EN 19:00 + 1:30 (geplant; ohne Planen 13:30 + 19:00).
-  ≥ 3 h Abstand zwischen Posts. Nacht-Slots über die Planen-Funktion (TikTok Studio, bis 10 Tage).
-  Zeitumstellung: 8.–29. März und 25. Okt.–1. Nov. liegen die EN-Zeiten 1 h früher.
-  Erste Stunde nach dem Posten: auf Kommentare antworten.
+## Posting-Infos (bei jeder Auslieferung mitgeben)
+- Titel/Caption aus `episode.upload`, 3–6 Hashtags, Frage an die Zuschauer als Kommentar-Trigger – kopierfertig.
+- Posting-Zeiten (deutsche Zeit): Mo–Fr 7:30 · 12:30 · 16:30 · 19:00 – Sa/So 10:00 · 13:00 · 17:00 · 20:30.
+  Nur 1–2 Posts/Tag: 12:30 + 19:00. ≥ 3 h Abstand. Erste Stunde nach dem Posten: auf Kommentare antworten.
