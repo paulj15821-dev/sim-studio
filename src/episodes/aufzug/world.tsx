@@ -10,6 +10,7 @@ import {
   SkyDome, CloudLayer, Airplane, Stars, Earth, Moon, SunGlow, OrbitRing, Particles, PlasmaShell, Rubble, type Pose,
 } from "../../three/kit";
 import { H, V } from "./metric";
+import { intl, t as tr } from "../../lib/i18n";
 
 // ───────────── Kabine (Meter, Boden bei y=0, Rückwand am Turm bei z=-1.2) ─────────────
 
@@ -106,8 +107,8 @@ const Rails: React.FC<{ below: number; above: number }> = ({ below, above }) => 
 
 export const floorText = (h: number) => {
   const f = Math.floor(h / 3.2);
-  if (f < 1) return "EG";
-  return new Intl.NumberFormat("de-DE").format(f);
+  if (f < 1) return tr("EG", "G");
+  return intl().format(f);
 };
 
 // ───────────── Himmel nach Höhe ─────────────
@@ -317,7 +318,7 @@ export const MoonLanding: React.FC<{ shot: ShotInfo }> = ({ shot }) => {
       <Particles kind="dust" n={160} box={[10, 1.4, 10]} center={[0, 0.5, 0]} time={t} velocity={[0.6, 0.2, 0.4]} opacity={dust} colors={[...PALETTE.moon]} />
       <Box size={[0.14, 5000, 0.14]} color={PALETTE.steel} position={[-1.32, 2500, -1.32]} bevel={0} />
       <Box size={[0.14, 5000, 0.14]} color={PALETTE.steel} position={[1.32, 2500, -1.32]} bevel={0} />
-      <Cabin floorText="MOND" doors={doors} />
+      <Cabin floorText={tr("MOND", "MOON")} doors={doors} />
       <Max pose={walking ? "walk" : t > 60.2 ? "lookUp" : "idle"} time={t} position={[0, 0, maxZ]} rotationY={t > 60.2 ? -0.5 : 0} expression={t > 60.2 ? "shock" : "neutral"} />
     </Stage>
   );

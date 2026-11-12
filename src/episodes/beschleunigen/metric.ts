@@ -3,6 +3,7 @@
 // Relativistisch korrekt: echtes Tempo v = c·tanh(w/c) → nähert sich c, erreicht es aber nie.
 // Die Videozeit ist Max' Eigenzeit; auf der Erde vergeht dt·cosh(w/c) → Zeitdilatation explodiert.
 import { C_LIGHT, solveTime } from "../../lib/metric";
+import { intl } from "../../lib/i18n";
 
 export const W0 = 3; // m/s
 export const EVERY = 1; // s
@@ -53,7 +54,7 @@ export const T_1PCT = solveTime(V, 0.01 * C, 0, 30);
 export const T_MOON = solveTime((t) => lookup(XS, t), 384_400_000, 20, 30);
 
 /** Tempo-Anzeige: km/h, ab 1 % in % c – mit immer mehr Neunen */
-const nf = (d: number) => new Intl.NumberFormat("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const nf = (d: number) => intl({ minimumFractionDigits: d, maximumFractionDigits: d });
 export const fmtV = (v: number) => {
   if (v < 0.01 * C) return `${nf(0).format(v * 3.6)} km/h`;
   const omb = 1 - v / C;

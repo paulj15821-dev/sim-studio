@@ -11,7 +11,7 @@ import { totalDuration } from "../src/lib/episode";
 
 const args = process.argv.slice(2);
 const id = args.find((a) => !a.startsWith("--"));
-const ep = EPISODES.find((e) => e.id === id);
+const ep = EPISODES.find((e) => e.id === id?.replace(/-EN$/, "")); // Ton ist in allen Sprachen gleich
 if (!ep) { console.error(`Episode nicht gefunden: ${id}. Verfügbar: ${EPISODES.map((e) => e.id).join(", ")}`); process.exit(1); }
 
 const SR = 48000;

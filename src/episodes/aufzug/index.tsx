@@ -147,6 +147,55 @@ export const aufzug: Episode = {
     { at: ARRIVE, transition: "flash", name: "Mond", ambience: "amb_space", ambienceVolume: 0.3, render: (s) => <MoonLanding shot={s} /> },
   ],
 
+  // ── Englische Fassung (gleiche Animation; Composition „Aufzug-EN“) ──
+  sceneText: true, // Kabinen-Display zeigt G / MOON
+  en: {
+    title: "What if your elevator got twice as fast every 2 seconds?",
+    hook: { text: "What if your elevator got twice as fast every 2 seconds?", highlight: ["twice as fast"] },
+    hud: [{
+      label: "Height",
+      compare: ["3rd floor", "Above the roof", "Higher than the Eiffel Tower", "Higher than any building", "In the clouds", "Higher than Everest", "Officially in space", "Higher than the ISS", "Among the satellites", "Wrong floor"],
+      pill: "×2 speed in {s} s",
+      secondary: "Speed",
+    }],
+    captions: [
+      "The elevator starts moving.",
+      "A little too fast.",
+      "3rd floor. It doesn't stop.",
+      "Everyone below looks up.",
+      "Floor 10. Floor 15…",
+      { text: "The roof. The rails just keep going.", highlight: ["going."] },
+      "The city gets tiny.",
+      "Higher than the Eiffel Tower.",
+      "And it keeps speeding up…",
+      { text: "BOOM. The sound barrier.", highlight: ["BOOM."] },
+      "Into the clouds…",
+      "…and through.",
+      "His ears pop.",
+      "Higher than Everest.",
+      "A plane. Too late to wave.",
+      { text: "Mach 17. The air starts to glow.", highlight: ["glow."] },
+      "The sky turns black.",
+      { text: "100 km: officially space.", highlight: ["space."] },
+      "Max is afraid of heights.",
+      { text: "The ISS. Long gone.", highlight: ["ISS."] },
+      "Below him: the entire Earth.",
+      "The elevator music is still playing.",
+      { text: "He presses 3 again.", highlight: ["3"] },
+      "Faster than any rocket.",
+      "36,000 km: where satellites park.",
+      "Earth: just a marble now.",
+      { text: "Over 10% of the speed of light.", highlight: ["10%"] },
+      "Next stop…",
+      { text: "The Moon.", highlight: ["Moon."] },
+      "And he only wanted the 3rd floor.",
+    ],
+    upload: {
+      caption: "What if your elevator got twice as fast every 2 seconds? 🛗🚀 How far would you ride?",
+      hashtags: ["#whatif", "#simulation", "#space", "#science", "#3danimation", "#fyp"],
+    },
+  },
+
   // ── Sound-Design (Automatik: Atmos, Übergänge, Ticks, Meilensteine, Untertitel – siehe src/audio/sfx.ts) ──
   sfx: [
     { at: 0.55, sound: "button", volume: 0.8 },

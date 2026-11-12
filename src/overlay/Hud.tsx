@@ -4,8 +4,9 @@ import { COLOR, FONT, LAYOUT } from "../style/theme";
 import { clamp, invLerp } from "../lib/anim";
 import { magnitude } from "../lib/metric";
 import type { HudSpec } from "../types";
+import { intl } from "../lib/i18n";
 
-const nf1 = new Intl.NumberFormat("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const nf1 = () => intl({ minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 const label: React.CSSProperties = {
   fontFamily: FONT.sans,
@@ -36,7 +37,7 @@ export const Hud: React.FC<{ hud: HudSpec }> = ({ hud }) => {
   if (hud.pill && t >= (hud.pill.startAt ?? 0) && t <= (hud.pill.stopAt ?? Infinity)) {
     const e = hud.pill.every;
     const left = e - (((t - (hud.pill.startAt ?? 0)) % e) + e) % e;
-    pillText = hud.pill.text(nf1.format(left));
+    pillText = hud.pill.text(nf1().format(left));
   }
   // Pille pulsiert kurz bei jeder Verdopplung
   const pulse = hud.pill ? Math.max(0, 1 - (((t - (hud.pill.startAt ?? 0)) % hud.pill.every) / 0.25)) : 0;

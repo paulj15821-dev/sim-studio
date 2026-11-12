@@ -1,11 +1,12 @@
 import React from "react";
-import { AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame, useVideoConfig, interpolate } from "remotion";
+import { AbsoluteFill, Audio, OffthreadVideo, Sequence, staticFile, useCurrentFrame, useVideoConfig, interpolate } from "remotion";
 import type { Episode } from "./types";
 import { Hook, Captions } from "./overlay/Text";
 import { Hud } from "./overlay/Hud";
 import { Grade, TransitionFx } from "./overlay/Grade";
 import { SoundLayer } from "./audio/SoundLayer";
 import { coldOpenDur } from "./lib/episode";
+import { langOfId, setLang } from "./lib/i18n";
 
 /** Der jeweils aktive Shot (nach Episodenzeit) inkl. Whip-Übergang. */
 const ShotView: React.FC<{ episode: Episode }> = ({ episode }) => {
@@ -50,15 +51,24 @@ const RewindFx: React.FC<{ at: number }> = ({ at }) => {
   );
 };
 
-/** Setzt eine Episode zusammen: (Cold Open →) aktiver Shot → Grading → HUD → Untertitel → Hook + Ton. */
-export const SimVideo: React.FC<{ episode: Episode }> = ({ episode }) => {
-  const { fps } = useVideoConfig();
+/**
+ * Setzt eine Episode zusammen: (Cold Open →) aktiver Shot → Grading → HUD → Untertitel → Hook + Ton.
+ * layers: "all" = alles (Standard) · "scene" = nur 3D + Übergänge + Ton (sprachneutral, wird einmal gerendert)
+ *         "text" = fertiges Szenen-Video (`baseSrc` in public/) + Texte der jeweiligen Sprache darüber.
+ * Die Sprache kommt aus der Composition-ID („…-EN“ = Englisch).
+ */
+export const SimVideo: React.FC<{ episode: Episode; layers?: "all" | "scene" | "text"; baseSrc?: string }> = ({ episode, layers = "all", baseSrc }) => {
+  const { fps, id } = useVideoConfig();
+  setLang(langOfId(id));
   const coF = Math.round(coldOpenDur(episode) * fps);
   const shots = episode.shots;
+  const scene = layers !== "text";
+  const text = layers !== "scene";
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
+      {!scene && baseSrc && <OffthreadVideo src={staticFile(baseSrc)} />}
       {/* Cold Open: Höhepunkt zeigen (Episodenzeit ab coldOpen.at) */}
-      {coF > 0 && episode.coldOpen && (
+      {scene && coF > 0 && episode.coldOpen && (
         <Sequence from={-Math.round(episode.coldOpen.at * fps)} durationInFrames={Math.round(episode.coldOpen.at * fps) + coF} name="Cold Open">
           <ShotView episode={episode} />
           <Grade />
@@ -66,18 +76,18 @@ export const SimVideo: React.FC<{ episode: Episode }> = ({ episode }) => {
       )}
       {/* Hauptteil */}
       <Sequence from={coF} durationInFrames={Math.round(episode.duration * fps)} name="Episode">
-        <ShotView episode={episode} />
-        <Grade />
-        {shots.map((s, k) =>
+        {scene && <ShotView episode={episode} />}
+        {scene && <Grade />}
+        {scene && shots.map((s, k) =>
           s.transition === "flash" || s.transition === "dip" ? <TransitionFx key={k} at={Math.round(s.at * fps)} kind={s.transition} /> : null
         )}
-        {episode.hud && (Array.isArray(episode.hud) ? episode.hud : [episode.hud]).map((h, k) => <Hud key={k} hud={h} />)}
-        <Captions captions={episode.captions} duration={episode.duration} />
+        {text && episode.hud && (Array.isArray(episode.hud) ? episode.hud : [episode.hud]).map((h, k) => <Hud key={k} hud={h} />)}
+        {text && <Captions captions={episode.captions} duration={episode.duration} />}
       </Sequence>
-      {coF > 0 && <RewindFx at={coF} />}
-      <Hook hook={episode.hook} extra={coF / fps} />
-      <SoundLayer episode={episode} />
-      {episode.music && <Audio src={staticFile(episode.music.src)} volume={episode.music.volume ?? 0.8} />}
+      {scene && coF > 0 && <RewindFx at={coF} />}
+      {text && <Hook hook={episode.hook} extra={coF / fps} />}
+      {scene && <SoundLayer episode={episode} />}
+      {scene && episode.music && <Audio src={staticFile(episode.music.src)} volume={episode.music.volume ?? 0.8} />}
     </AbsoluteFill>
   );
 };

@@ -66,6 +66,15 @@ export type Episode = {
   /** Optional: Musik-Datei in public/, z. B. "music/epic.mp3" (normalerweise fügt der Nutzer Musik selbst hinzu) */
   music?: { src: string; volume?: number };
   /**
+   * Englische Fassung (gleiche Animation, nur Texte). Erzeugt automatisch die Composition „<id>-EN“.
+   * `captions` = gleiche Reihenfolge/Anzahl wie die deutschen (Timing wird übernommen).
+   * `hud` = pro HUD (gleiche Reihenfolge): Label, Vergleiche (gleiche Anzahl), Pille ({s} = Sekunden), Zweit-Label.
+   */
+  en?: EpisodeEN;
+  /** true, wenn in der 3D-Welt sprachabhängiger Text steht (Displays/Schilder via t()). Dann wird die Szene pro
+   *  Sprache gerendert; sonst nur einmal und die Texte werden pro Sprache darübergelegt (viel schneller). */
+  sceneText?: boolean;
+  /**
    * Cold Open: Die ersten `dur` Sekunden (Standard 1,0) zeigen den Höhepunkt ab Videosekunde `at`
    * (mit Hook darüber), dann Rückspul-Effekt und das Video startet von vorn. Gesamtlänge = duration + dur.
    * Stoppt den Daumen: Im allerersten Bild sieht man, wohin es geht.
@@ -76,5 +85,13 @@ export type Episode = {
   /** Sound-Grundeinstellungen: Standard-Atmo + automatische Ebenen an/aus, Gesamtlautstärke */
   sound?: { ambience?: Ambience | "none"; cuts?: boolean; captions?: boolean; ticks?: boolean; milestones?: boolean; volume?: number };
   /** Upload-Infos (werden von /video mit ausgegeben) */
+  upload?: { caption: string; hashtags: string[] };
+};
+
+export type EpisodeEN = {
+  title: string;
+  hook: { text: string; highlight?: string[] };
+  captions: (string | { text: string; highlight?: string[] })[];
+  hud?: { label?: string; compare?: string[]; pill?: string; secondary?: string }[];
   upload?: { caption: string; hashtags: string[] };
 };

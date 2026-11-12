@@ -1,4 +1,5 @@
 import { logKeys, solveTime } from "../../lib/metric";
+import { intl } from "../../lib/i18n";
 
 // Fakten (gerundet):
 //  Weltbevölkerung 2026 ~8,3 Mrd., Männeranteil ~50,2 % → ~4,17 Mrd. Männer (UN World Population Prospects)
@@ -54,7 +55,7 @@ export const YEAR = logKeys([
 
 export const atGone = (s: number) => solveTime(GONE, s, VANISH, END);
 
-const nf = (d: number) => new Intl.NumberFormat("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const nf = (d: number) => intl({ minimumFractionDigits: d, maximumFractionDigits: d });
 const one = (v: number) => (v < 10 ? nf(1).format(Math.floor(v * 10) / 10) : nf(0).format(Math.floor(v)));
 
 /** 8,3 Sek. → 14 Min. → 3,2 Std. → 6,4 Tage → 4,1 Monate */

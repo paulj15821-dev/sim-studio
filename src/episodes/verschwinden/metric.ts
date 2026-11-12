@@ -1,4 +1,5 @@
 import { logKeys, solveTime } from "../../lib/metric";
+import { intl } from "../../lib/i18n";
 
 // Fakten (gerundet, Quellen: UN-Weltbevölkerung, A. Weisman „Die Welt ohne uns“, gängige Schätzungen):
 //  Weltbevölkerung ~8,2 Mrd., Netto-Zuwachs ~70 Mio./Jahr ≈ 2,2 pro Sekunde
@@ -45,7 +46,7 @@ export const POP = (t: number) => (t < VANISH ? PEOPLE + Math.floor(t * 2.2 * 10
 /** Videosekunde, zu der x Jahre erreicht sind */
 export const atYears = (y: number) => solveTime(GONE, y * Y, VANISH, BACK);
 
-const nf = (d: number) => new Intl.NumberFormat("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const nf = (d: number) => intl({ minimumFractionDigits: d, maximumFractionDigits: d });
 const one = (v: number) => (v < 10 ? nf(1).format(Math.floor(v * 10) / 10) : nf(0).format(Math.floor(v)));
 
 /** 8,3 Sek. → 14 Min. → 3,2 Std. → 6,4 Tage → 4,1 Monate → 1.000 Jahre */
