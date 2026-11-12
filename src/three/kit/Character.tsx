@@ -104,7 +104,9 @@ export const Character: React.FC<{
   scale?: number;
   expression?: "neutral" | "happy" | "shock";
   /** Gegenstand: "phone" in der rechten Hand (passt zu pose "phone"), "pizza" = Karton vor dem Bauch (pose "carry") */
-  hold?: "phone" | "pizza";
+  hold?: "phone" | "pizza" | "letter";
+  /** Farbe des Handy-Bildschirms (Standard hellblau), z. B. Rot für Warnmeldung */
+  screen?: string;
   /** Gelenke überschreiben (Radiant), z. B. { lHip: -0.8 } hebt das linke Bein */
   joints?: Partial<Joints>;
   /** Bartlänge in m (0 = keiner) */
@@ -117,7 +119,7 @@ export const Character: React.FC<{
   eyesClosed?: boolean;
   /** Geist-Modus 0..1: halbtransparent mit leichtem Mint-Leuchten (0 = normal). Bei 1 ganz unsichtbar. */
   ghost?: number;
-}> = ({ outfit = MAX_OUTFIT, pose = "idle", time = 0, speed = 1.1, position = [0, 0, 0], rotationY = 0, rotation, scale = 1, expression = "neutral", hold, joints, beard = 0, hairLong = 0, hairColor, eyesClosed = false, ghost = 0 }) => {
+}> = ({ outfit = MAX_OUTFIT, pose = "idle", time = 0, speed = 1.1, position = [0, 0, 0], rotationY = 0, rotation, scale = 1, expression = "neutral", hold, screen, joints, beard = 0, hairLong = 0, hairColor, eyesClosed = false, ghost = 0 }) => {
   const j = { ...poseJoints(pose, time, speed), ...joints };
   if (ghost >= 0.999) return null;
   const Box = ghost > 0.001 ? ghostBox(ghost) : BaseBox;
@@ -145,7 +147,16 @@ export const Character: React.FC<{
               {hold === "phone" && side > 0 && (
                 <group position={[0.0, -0.7, 0.07]} rotation={[-0.3, 0, 0]}>
                   <Box size={[0.09, 0.17, 0.03]} color="#1E2228" cast={false} roughness={0.35} />
-                  <Box size={[0.075, 0.15, 0.005]} color="#BDEFFF" emissive="#8FE3FF" position={[0, 0, 0.017]} cast={false} bevel={0} />
+                  <Box size={[0.075, 0.15, 0.005]} color={screen ?? "#BDEFFF"} emissive={screen ?? "#8FE3FF"} emissiveIntensity={screen ? 2.2 : 1} position={[0, 0, 0.017]} cast={false} bevel={0} />
+                </group>
+              )}
+              {hold === "letter" && side > 0 && (
+                <group position={[-0.06, -0.72, 0.1]} rotation={[-0.3, 0, 0]}>
+                  <Box size={[0.3, 0.21, 0.01]} color="#F6F2EA" cast={false} bevel={0} />
+                  <Box size={[0.16, 0.012, 0.004]} color="#3A3A44" position={[-0.04, 0.05, 0.007]} cast={false} bevel={0} />
+                  <Box size={[0.2, 0.012, 0.004]} color="#3A3A44" position={[-0.02, 0.02, 0.007]} cast={false} bevel={0} />
+                  <Box size={[0.18, 0.012, 0.004]} color="#3A3A44" position={[-0.03, -0.01, 0.007]} cast={false} bevel={0} />
+                  <Box size={[0.05, 0.05, 0.004]} color="#C8402F" position={[0.1, -0.06, 0.007]} cast={false} bevel={0} />
                 </group>
               )}
             </group>
