@@ -6,6 +6,7 @@ import { koma } from "./koma";
 import { verschwinden } from "./verschwinden";
 import { wachsen } from "./wachsen";
 import { atombombe } from "./atombombe";
+import { maenner } from "./maenner";
 import { testbild } from "./testbild";
 
 export const EPISODES: Episode[] = [
@@ -15,5 +16,6 @@ export const EPISODES: Episode[] = [
   verschwinden,
   wachsen,
   atombombe,
+  maenner,
   testbild, // Look-Test, keine Episode zum Posten
 ];
