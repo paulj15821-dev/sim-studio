@@ -1,5 +1,5 @@
 import { logKeys, solveTime } from "../../lib/metric";
-import { intl } from "../../lib/i18n";
+import { intl, t as tr } from "../../lib/i18n";
 
 // Fakten (gerundet):
 //  Herz ~70 Schläge/min → ~100.000 pro Tag, 10 Jahre ≈ 368 Mio., 30 Jahre ≈ 1,1 Mrd.
@@ -54,19 +54,19 @@ const one = (v: number) => (v < 10 ? nf(1).format(Math.floor(v * 10) / 10) : nf(
 
 /** Koma-Dauer: 8,3 Sekunden → 14 Minuten → 3,2 Stunden → 6,4 Tage → 4,1 Monate → 27 Jahre */
 export const fmtComa = (s: number) => {
-  if (s < 60) return `${one(s)} Sek.`;
-  if (s < 3600) return `${one(s / 60)} Min.`;
-  if (s < DAY) return `${one(s / 3600)} Std.`;
-  if (s < 60 * DAY) return `${one(s / DAY)} Tage`;
-  if (s < Y) return `${one(s / (Y / 12))} Monate`;
+  if (s < 60) return `${one(s)} ${tr("Sek.", "sec")}`;
+  if (s < 3600) return `${one(s / 60)} ${tr("Min.", "min")}`;
+  if (s < DAY) return `${one(s / 3600)} ${tr("Std.", "hrs")}`;
+  if (s < 60 * DAY) return `${one(s / DAY)} ${tr("Tage", "days")}`;
+  if (s < Y) return `${one(s / (Y / 12))} ${tr("Monate", "months")}`;
   const y = s / Y;
-  return `${one(y)} ${y < 2 ? "Jahr" : "Jahre"}`;
+  return `${one(y)} ${y < 2 ? tr("Jahr", y < 1.05 ? "year" : "years") : tr("Jahre", "years")}`;
 };
 
 const two = (n: number) => String(Math.floor(n)).padStart(2, "0");
 /** 04:16,3 */
-export const fmtLate = (s: number) => `${two(s / 60)}:${two(s % 60)},${Math.floor((s * 10) % 10)}`;
-export const fmtAwake = (s: number) => `${one(s)} Sek.`;
+export const fmtLate = (s: number) => `${two(s / 60)}:${two(s % 60)}${tr(",", ".")}${Math.floor((s * 10) % 10)}`;
+export const fmtAwake = (s: number) => `${one(s)} ${tr("Sek.", "sec")}`;
 
 /** Jahreszahl im Video (Unfall 2026) */
 export const yearOf = (t: number) => 2026 + Math.floor(years(t) + 0.87); // Unfall im November

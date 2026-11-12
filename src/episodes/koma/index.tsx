@@ -7,6 +7,7 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { Episode } from "../../types";
 import { clamp, lerp, type Vec3 } from "../../lib/anim";
 import { fmtCount, fmtSpeed } from "../../lib/metric";
+import { t as tr } from "../../lib/i18n";
 import { EgoView, blinkAt } from "../../overlay/Ego";
 import { Street, Ward, Town, move, EYE_LIE, EYE_SIT, type CamFn, type PhoneUI, type ChatItem, type WardPerson } from "./world";
 import { COMA, BEATS, LATE, AWAKE, CRASH, WAKE, DAY, Y, years, fmtComa, fmtLate, fmtAwake } from "./metric";
@@ -39,30 +40,32 @@ const MOM_SIT: WardPerson = { who: "mom", pos: [1.25, 0, -1.5], rotY: -Math.PI /
 const MOM_LEAN = (lean = 0.3, expr: WardPerson["expr"] = "neutral"): WardPerson => ({ who: "mom", pos: [1.0, 0, -2.0], rotY: -Math.PI / 2 - 0.5, pose: "carry", lean, expr });
 
 // ── Handy-Inhalte ──
-const LEON_OLD: ChatItem[] = [
-  { divider: "MI., 11. NOV. 2026" },
-  { text: "Kommst du heute mit ins Kino?", time: "17:40" },
-  { me: true, text: "Klar! Bin pünktlich.", time: "17:41" },
-  { text: "Wo bleibst du?? Film fängt an!", time: "19:58" },
+// Funktionen statt Konstanten: Texte werden zur Renderzeit in der jeweiligen Sprache erzeugt (tr = Deutsch/Englisch)
+const LEON_OLD = (): ChatItem[] => [
+  { divider: tr("MI., 11. NOV. 2026", "WED, NOV 11, 2026") },
+  { text: tr("Kommst du heute mit ins Kino?", "Coming to the movies tonight?"), time: "17:40" },
+  { me: true, text: tr("Klar! Bin pünktlich.", "Sure! I'll be on time."), time: "17:41" },
+  { text: tr("Wo bleibst du?? Film fängt an!", "Where are you?? Movie's starting!"), time: "19:58" },
 ];
-const REPLY = "Sorry, bin gleich da.";
+const REPLY = () => tr("Sorry, bin gleich da.", "Sorry, almost there.");
 const chatAt = (t: number): PhoneUI => {
   const typed = clamp((t - 58.9) / 1.1);
   const sent = t >= 60.15;
-  const items: ChatItem[] = [...LEON_OLD, { divider: "HEUTE · 2056" }];
-  if (sent) items.push({ me: true, text: REPLY, time: "10:14" });
-  if (t >= 61.2) items.push({ text: "Der Film war eh schlecht.", time: "10:14" });
-  return { kind: "chat", contact: "Leon", clock: "10:14", items, input: sent ? "" : REPLY.slice(0, Math.floor(typed * REPLY.length)), cursor: !sent, typing: t > 60.5 && t < 61.2 };
+  const reply = REPLY();
+  const items: ChatItem[] = [...LEON_OLD(), { divider: tr("HEUTE · 2056", "TODAY · 2056") }];
+  if (sent) items.push({ me: true, text: reply, time: "10:14" });
+  if (t >= 61.2) items.push({ text: tr("Der Film war eh schlecht.", "The movie sucked anyway."), time: "10:14" });
+  return { kind: "chat", contact: "Leon", clock: "10:14", items, input: sent ? "" : reply.slice(0, Math.floor(typed * reply.length)), cursor: !sent, typing: t > 60.5 && t < 61.2 };
 };
 const nightPhoneAt = (t: number): PhoneUI => {
   if (t >= 14.6) return { kind: "dead" };
   const n = Math.round(Math.pow(clamp((t - 13.0) / 0.9), 1.6) * 847);
   const notes = [
-    { app: "Leon", text: "Alles okay?? Melde dich!" },
-    { app: "Mama", text: "Verpasster Anruf (14)" },
-    { app: "Kino-Gruppe", text: "Wir denken an dich ❤" },
+    { app: "Leon", text: tr("Alles okay?? Melde dich!", "You okay?? Text me!") },
+    { app: tr("Mama", "Mom"), text: tr("Verpasster Anruf (14)", "Missed call (14)") },
+    { app: tr("Kino-Gruppe", "Movie Group"), text: tr("Wir denken an dich ❤", "Thinking of you ❤") },
   ].slice(0, 1 + Math.min(2, Math.floor((t - 13.0) / 0.3)));
-  return { kind: "lock", clock: "08:12", date: "Freitag, 4. Dezember", notes, more: n > 3 ? n - 3 : undefined, battery: clamp(0.09 - (t - 13) * 0.055, 0.005) };
+  return { kind: "lock", clock: "08:12", date: tr("Freitag, 4. Dezember", "Friday, December 4"), notes, more: n > 3 ? n - 3 : undefined, battery: clamp(0.09 - (t - 13) * 0.055, 0.005) };
 };
 
 export const koma: Episode = {
@@ -103,7 +106,7 @@ export const koma: Episode = {
       value: AWAKE,
       format: fmtAwake,
       compare: [{ at: 0, text: "Hallo, Welt." }],
-      secondary: { label: "Dein Alter", value: () => 55, format: (v) => `${v} Jahre` },
+      secondary: { label: "Dein Alter", value: () => 55, format: (v) => `${v} ${tr("Jahre", "years")}` },
       from: WAKE,
       until: 57.3,
     },
@@ -152,6 +155,61 @@ export const koma: Episode = {
     { at: 61.2, text: "„Der Film war eh schlecht.“", italic: true },
   ],
 
+  // ── Englische Fassung (gleiche Animation; Composition „<Id>-EN“) ──
+  sceneText: true, // Handy: Chat, Sperrbildschirm, Mitteilungen
+  en: {
+    title: "What if you were in a coma for 30 years?",
+    hook: { text: "What if you were in a coma for 30 years?", highlight: ["30 years"] },
+    hud: [
+      { label: "Late for the movie", secondary: "Speed" },
+      { label: "In a coma for", compare: ["ER", "ICU", "Phone battery: dead", "Slept through a birthday", "Only Mom still comes", "Mom is now 61", "Mom is now 71", "Longer than the record"], secondary: "Heartbeats" },
+      { label: "Awake for", compare: ["Hello, world."], secondary: "Your age" },
+    ],
+    captions: [
+      "You're running late. Just a quick look at your phone…",
+      "…a mistake.",
+      "Blue lights. Voices. Then: nothing.",
+      { text: "Diagnosis: coma.", highlight: ["coma."] },
+      { text: "Your heart beats 100,000 times a day.", highlight: ["100,000"] },
+      "Some coma patients can hear what's said.",
+      "Mom reads to you every day.",
+      { text: "Your phone: 847 unread messages.", highlight: ["847"] },
+      "Then the battery dies.",
+      "A coma usually lasts just weeks.",
+      { text: "Yours doesn't.", highlight: ["doesn't."] },
+      { text: "Hair grows about 1 cm a month.", highlight: ["1 cm"] },
+      "The nurse cuts it. Always crooked.",
+      "Let's zoom out.",
+      { text: "One year. The world keeps turning.", highlight: ["One year."] },
+      { text: "Bed rest costs up to 1% muscle strength – daily.", highlight: ["1%"] },
+      "Physio every day. You feel nothing.",
+      "At first, everyone came.",
+      { text: "After 3 years: only Mom.", highlight: ["Mom."] },
+      { text: "5 years. A new city grows outside.", highlight: ["5 years."] },
+      "Packages now arrive by drone.",
+      "Mom's little plant from day 1…",
+      "…now touches the ceiling.",
+      { text: "10 years: 368 million heartbeats.", highlight: ["368 million"] },
+      "Not a single one missed.",
+      "Mom still comes.",
+      { text: "Every Sunday. For 15 years.", highlight: ["15 years."] },
+      "You don't recognize your city anymore.",
+      { text: "20 years. Mom is now 71.", highlight: ["20 years."] },
+      "Record: a woman woke up after 27 years.",
+      { text: "You beat it.", highlight: ["beat"] },
+      { text: "Then, after 30 years…", highlight: ["30 years…"] },
+      "…your finger twitches.",
+      "You open your eyes.",
+      "Mom is 81. She's crying.",
+      { text: "You're 55 now.", highlight: ["55"] },
+      "In your head: still 25.",
+      "Your old phone. A chat is open.",
+      "You type: “Sorry, almost there.”",
+      "“The movie sucked anyway.”",
+    ],
+    upload: { caption: "What if you were in a coma for 30 years? 🏥⏳ What's the first thing you'd do after waking up?", hashtags: ["#whatif", "#coma", "#simulation", "#pov", "#3danimation", "#fyp"] },
+  },
+
   shots: [
     // ── 1 Alltag: auf dem Rad zum Kino ──
     {
@@ -161,7 +219,7 @@ export const koma: Episode = {
     {
       at: 2.2, name: "Blick aufs Handy", ambience: "amb_city", ambienceVolume: 0.5, silentCut: true,
       render: (s) => (
-        <Street shot={s} phase="phone" ui={{ kind: "lock", clock: "19:58", date: "Mittwoch, 11. November", notes: [{ app: "Leon", text: "Wo bleibst du??" }, { app: "Leon", text: "Film fängt an!" }], battery: 0.64 }}
+        <Street shot={s} phase="phone" ui={{ kind: "lock", clock: "19:58", date: tr("Mittwoch, 11. November", "Wednesday, November 11"), notes: [{ app: "Leon", text: tr("Wo bleibst du??", "Where are you??") }, { app: "Leon", text: tr("Film fängt an!", "Movie\u2019s starting!") }], battery: 0.64 }}
           look={(l) => [0.04, -0.25 - l * 0.01, -0.29]} />
       ),
     },
