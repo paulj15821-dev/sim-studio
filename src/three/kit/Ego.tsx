@@ -16,12 +16,13 @@ export const Limb: React.FC<{ a: Vec3; b: Vec3; w: number; color: string }> = ({
   return <Box size={[w, len, w * 1.1]} color={color} position={[mid.x, mid.y, mid.z]} rotation={new THREE.Euler().setFromQuaternion(q).toArray().slice(0, 3) as Vec3} cast={false} />;
 };
 
-export type EgoPose = "hidden" | "idle" | "phone" | "run" | "brace" | "reach" | "cover";
+export type EgoPose = "hidden" | "idle" | "phone" | "run" | "brace" | "reach" | "cover" | "cheer" | "pad";
 
 /**
  * Arme des Zuschauers, im Kamera-Raum (x rechts, y oben, −z nach vorn).
  *  pose: "phone" rechts Handy vors Gesicht · "run" Arme schwingen · "brace" Hände schützend vorn
  *        "reach" rechte Hand greift nach vorn (Tür) · "cover" Hände vors Gesicht · "idle" Hände unten am Bildrand
+ *        "cheer" Arme jubelnd hoch · "pad" beide Hände vorn unten (Controller, Buch, Lenkrad)
  *  right: Objekt in der rechten Hand (z. B. <Phone>), lokal: Handfläche zeigt zur Kamera
  */
 export const EgoRig: React.FC<{ eye: Vec3; look: Vec3; pose?: EgoPose; time?: number; sleeve?: string; skin?: string; right?: React.ReactNode; roll?: number }> = ({
@@ -39,6 +40,8 @@ export const EgoRig: React.FC<{ eye: Vec3; look: Vec3; pose?: EgoPose; time?: nu
       case "brace": return [side * 0.13 + 0.01 * s, -0.12 + 0.012 * c, -0.36];
       case "reach": return side > 0 ? [0.12, -0.1, -0.5] : [-0.24, -0.4, -0.3];
       case "cover": return [side * 0.06, -0.02, -0.2];
+      case "cheer": return [side * (0.3 + 0.03 * s), 0.12 + 0.06 * Math.abs(s), -0.42];
+      case "pad": return [side * 0.09, -0.27 + 0.008 * Math.sin(time * 7 + side), -0.34];
       default: return [side * 0.24, -0.4 + 0.01 * Math.sin(time * 1.4), -0.32];
     }
   };

@@ -11,6 +11,7 @@ import { angriff } from "./angriff";
 import { beschleunigen } from "./beschleunigen";
 import { asteroidPov } from "./asteroid-pov";
 import { schrumpfen } from "./schrumpfen";
+import { schulfrei } from "./schulfrei";
 import { testbild } from "./testbild";
 
 export const EPISODES: Episode[] = [
@@ -25,5 +26,6 @@ export const EPISODES: Episode[] = [
   beschleunigen,
   asteroidPov,
   schrumpfen,
+  schulfrei,
   testbild, // Look-Test, keine Episode zum Posten
 ];
