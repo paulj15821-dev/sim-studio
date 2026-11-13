@@ -6,6 +6,7 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { Episode } from "../../types";
 import { clamp, lerp, type Vec3 } from "../../lib/anim";
 import { EgoView } from "../../overlay/Ego";
+import { t as tr } from "../../lib/i18n";
 import { Box } from "../../three/kit";
 import { Phone, type PhoneUI, type ChatItem } from "../koma/world";
 import {
@@ -20,18 +21,18 @@ const CLASS_SUN: Vec3 = [-10, 7, 2.5]; // Sonne kommt durch die Fenster links
 
 // ── Handy-Bildschirme ──
 const breaking = (): PhoneUI => ({
-  kind: "lock", clock: "07:58", date: "Montag", battery: 0.64,
+  kind: "lock", clock: "07:58", date: tr("Montag", "Monday"), battery: 0.64,
   notes: [
-    { app: "EILMELDUNG", text: "Alle Schulen schließen." },
-    { app: "EILMELDUNG", text: "Ab sofort. Für immer." },
-    { app: "Max", text: "BRO SCHAU AUFS HANDY" },
+    { app: tr("EILMELDUNG", "BREAKING NEWS"), text: tr("Alle Schulen schließen.", "All schools are closing.") },
+    { app: tr("EILMELDUNG", "BREAKING NEWS"), text: tr("Ab sofort. Für immer.", "Effective now. Forever.") },
+    { app: "Max", text: tr("BRO SCHAU AUFS HANDY", "BRO CHECK UR PHONE") },
   ],
 });
 const wakeUI = (): PhoneUI => ({
-  kind: "lock", clock: "14:07", date: "Dienstag", battery: 0.92,
+  kind: "lock", clock: "14:07", date: tr("Dienstag", "Tuesday"), battery: 0.92,
   notes: [
-    { app: "Mama", text: "Bist du endlich wach??" },
-    { app: "Max", text: "bro hab 14 std gepennt" },
+    { app: tr("Mama", "Mom"), text: tr("Bist du endlich wach??", "Are you finally awake??") },
+    { app: "Max", text: tr("bro hab 14 std gepennt", "bro slept 14 hrs lol") },
   ],
 });
 const chatUpTo = (t: number, list: [number, ChatItem][], typingFrom?: number): PhoneUI => ({
@@ -39,23 +40,23 @@ const chatUpTo = (t: number, list: [number, ChatItem][], typingFrom?: number): P
   items: list.filter(([at]) => t >= at).map(([, it]) => it),
   typing: typingFrom != null && t >= typingFrom,
 });
-const BORED: [number, ChatItem][] = [
-  [0, { divider: "Donnerstag? Freitag?" }],
-  [17.65, { text: "welcher tag ist heute", time: "15:42" }],
-  [18.05, { me: true, text: "keine ahnung", time: "15:42" }],
-  [18.45, { text: "mir ist sooo langweilig", time: "15:43" }],
-  [18.9, { me: true, text: "ich vermiss die pausen", time: "15:43" }],
+const BORED = (): [number, ChatItem][] => [
+  [0, { divider: tr("Donnerstag? Freitag?", "Thursday? Friday?") }],
+  [17.65, { text: tr("welcher tag ist heute", "what day is it"), time: "15:42" }],
+  [18.05, { me: true, text: tr("keine ahnung", "no idea"), time: "15:42" }],
+  [18.45, { text: tr("mir ist sooo langweilig", "im sooo bored"), time: "15:43" }],
+  [18.9, { me: true, text: tr("ich vermiss die pausen", "i miss recess"), time: "15:43" }],
 ];
 const alarmUI = (): PhoneUI => ({
-  kind: "lock", clock: "06:45", date: "Montag", battery: 0.31,
-  notes: [{ app: "WECKER", text: "Aufstehen. Schule." }],
+  kind: "lock", clock: "06:45", date: tr("Montag", "Monday"), battery: 0.31,
+  notes: [{ app: tr("WECKER", "ALARM"), text: tr("Aufstehen. Schule.", "Get up. School.") }],
 });
-const MATHE: [number, ChatItem][] = [
-  [0, { divider: "Heute" }],
+const MATHE = (): [number, ChatItem][] => [
+  [0, { divider: tr("Heute", "Today") }],
   [32.0, { text: "bro", time: "06:46" }],
-  [32.35, { text: "wach auf", time: "06:46" }],
-  [33.0, { text: "heute ist mathe test", time: "06:46" }],
-  [33.9, { text: "hast du gelernt??", time: "06:47" }],
+  [32.35, { text: tr("wach auf", "wake up"), time: "06:46" }],
+  [33.0, { text: tr("heute ist mathe test", "math test today"), time: "06:46" }],
+  [33.9, { text: tr("hast du gelernt??", "did u study??"), time: "06:47" }],
 ];
 /** Handy in der rechten Hand, vibriert ab `buzz` */
 const phoneIn = (ui: (t: number) => PhoneUI, buzz?: [number, number]) => (t: number) => {
@@ -273,7 +274,7 @@ export const schulfrei: Episode = {
       render: (s) => (
         <Room shot={s} mood="grey"
           view={({ t }) => pov(t, [-0.35, 1.55, -0.55], [-1.2, 0.6, -1.4], { fov: 60 })}
-          ego="phone" right={phoneIn((t) => chatUpTo(t, BORED, 19.1))}
+          ego="phone" right={phoneIn((t) => chatUpTo(t, BORED(), 19.1))}
           room={() => ({ mess: 1, clock: "15:42", max: { pos: [-1.45, 0.78, -0.25], rotation: [-Math.PI / 2, 0, 0], pose: "idle", expr: "neutral", joints: { lArmZ: 0.5, rArmZ: -0.5 } } })} />
       ),
     },
@@ -337,7 +338,7 @@ export const schulfrei: Episode = {
       render: (s) => (
         <Room shot={s} mood="dawn"
           view={({ t }) => pov(t, path3([[31.8, [-1.4, 1.0, -1.9]], [DUR, [-1.3, 1.08, -1.7]]], t), [-1.0, 2.0, -0.8], { fov: 60 })}
-          ego="phone" right={phoneIn((t) => chatUpTo(t, MATHE, 34.2), [31.95, 32.15])}
+          ego="phone" right={phoneIn((t) => chatUpTo(t, MATHE(), 34.2), [31.95, 32.15])}
           room={() => ({ mess: 0, clock: "06:46" })} />
       ),
     },
@@ -404,6 +405,49 @@ export const schulfrei: Episode = {
     // Pointe: Schulklingel
     { at: 34.15, sound: "school_bell", volume: 0.55 },
   ],
+
+  // ── Englische Fassung ──
+  sceneText: true, // Handy, Test, Tafel, Lebenslauf, Schulschild
+  en: {
+    title: "What if every school closed forever?",
+    hook: { text: "What if every school closed forever?", highlight: ["forever"] },
+    hud: [
+      { label: "Without school", compare: ["School: closed. Forever.", "Slept in", "Gaming instead of math", "Endless summer", "Boredom", "No diploma", "No new doctors"], secondary: "Alarms set" },
+      { label: "Without school", compare: ["It was all a dream"], secondary: "Alarms set" },
+    ],
+    chapters: ["DAY 1", "WEEK 1", "SUMMER", "MONTH 6", "YEAR 3", "YEAR 10", "MONDAY, 6:45 AM"],
+    captions: [
+      { text: "Monday. Math test. You didn't study.", highlight: ["didn't"] },
+      { text: "Suddenly every phone buzzes.", highlight: ["every"] },
+      { text: "All schools are closing. Forever.", highlight: ["Forever."] },
+      { text: "The whole class goes wild.", highlight: ["goes wild."] },
+      "Max rips up the test. Teacher watching.",
+      { text: "No alarm. You sleep until 2 PM.", highlight: ["2 PM."] },
+      "Nobody wakes you. Nobody nags.",
+      { text: "Gaming until 4 AM. Every night.", highlight: ["4 AM."] },
+      "Max basically lives at your place now.",
+      "The pool. Tuesday, 10 AM.",
+      { text: "You're finally free.", highlight: ["free."] },
+      "Every show watched. Every game beaten.",
+      { text: "Every day feels the same.", highlight: ["same."] },
+      "You miss… recess?",
+      "Your first job interview.",
+      "“Diploma?” – “No.” – “Thanks, bye.”",
+      { text: "Without school, nobody hires you.", highlight: ["nobody"] },
+      { text: "No new doctors. No pilots.", highlight: ["doctors."] },
+      "Your old school: overgrown.",
+      "Max wants to reopen it.",
+      { text: "You say: Never.", highlight: ["Never."] },
+      { text: "6:45 AM. Monday. Your alarm.", highlight: ["6:45"] },
+      { text: "It was all a dream.", highlight: ["dream."] },
+      "Max texts:",
+      { text: "“Bro… math test today.”", highlight: ["math test"] },
+    ],
+    upload: {
+      caption: "What if every school closed forever? 🏫😳 Freedom at first… and then? Would you reopen the schools – yes or no?",
+      hashtags: ["#pov", "#whatif", "#school", "#noschool", "#3danimation", "#fyp"],
+    },
+  },
 
   upload: {
     caption: "Was wäre, wenn alle Schulen für immer schließen? 🏫😳 Am Anfang Freiheit… und dann? Würdest du die Schule wieder aufmachen – ja oder nein?",

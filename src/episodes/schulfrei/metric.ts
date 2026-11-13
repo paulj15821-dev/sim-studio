@@ -1,5 +1,5 @@
 import { logKeys } from "../../lib/metric";
-import { intl } from "../../lib/i18n";
+import { intl, t as tr } from "../../lib/i18n";
 
 // Format B (Zeitsprung): Zähler „Ohne Schule“ läuft ab der Eilmeldung.
 // Kapitel: TAG 1 (14 Uhr aufgewacht) → WOCHE 1 → SOMMER (~6 Wochen) → MONAT 6 → JAHR 3 → JAHR 10 → Wecker (alles geträumt).
@@ -21,7 +21,7 @@ export const DAYS = logKeys([
 
 /** 0 Std. → 14 Std. → 6,4 Tage → 1.095 Tage (tickt jeden Frame) */
 export const fmtDays = (d: number) => {
-  if (d < 1) return `${Math.floor(d * 24)} Std.`;
-  if (d < 100) return `${new Intl.NumberFormat("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Math.floor(d * 10) / 10)} Tage`;
-  return `${intl().format(Math.floor(d))} Tage`;
+  if (d < 1) return `${Math.floor(d * 24)} ${tr("Std.", "hrs")}`;
+  if (d < 100) return `${intl({ minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Math.floor(d * 10) / 10)} ${tr("Tage", "days")}`;
+  return `${intl().format(Math.floor(d))} ${tr("Tage", "days")}`;
 };

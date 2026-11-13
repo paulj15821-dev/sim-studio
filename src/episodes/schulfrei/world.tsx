@@ -8,6 +8,7 @@ import { rng } from "../../lib/random";
 import { useTimes } from "../../lib/time";
 import type { ShotInfo } from "../../types";
 import { PALETTE } from "../../style/theme";
+import { t as tr, getLang } from "../../lib/i18n";
 import {
   Stage, Camera, Box, Max, Person, Character, Bed, Table, Tree, Bush, GrassBlades, Building, House, SkyDome, Cloud,
   Particles, Instanced, EgoRig, useStripedGrass, Ground, type EgoPose, type LightPreset, type Pose, type Joints, type Inst, type Outfit,
@@ -84,7 +85,7 @@ function useCanvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) 
     draw(c.getContext("2d")!);
     const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8;
     return tx;
-  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [...deps, getLang()]); // eslint-disable-line react-hooks/exhaustive-deps
 }
 
 /** Bemalte Fläche (Tafel, Poster, Blatt). +z = Vorderseite */
@@ -101,14 +102,14 @@ const font = (w: number, px: number, fam = "Inter, sans-serif") => `${w} ${px}px
 export const TestSheet: React.FC<{ position: Vec3; rotY?: number; graded?: boolean }> = ({ position, rotY = 0 }) => {
   const tex = useCanvasTex(420, 594, (g) => {
     g.fillStyle = "#FBF8F1"; g.fillRect(0, 0, 420, 594);
-    g.fillStyle = "#1E2430"; g.font = font(800, 30); g.fillText("MATHE – Klassenarbeit", 26, 52);
-    g.font = font(500, 20); g.fillStyle = "#444C58"; g.fillText("Name: ____________   Note: ____", 26, 92);
+    g.fillStyle = "#1E2430"; g.font = font(800, 30); g.fillText(tr("MATHE – Klassenarbeit", "MATH – Final Test"), 26, 52);
+    g.font = font(500, 20); g.fillStyle = "#444C58"; g.fillText(tr("Name: ____________   Note: ____", "Name: ____________   Grade: ____"), 26, 92);
     g.strokeStyle = "#D8D2C4"; g.lineWidth = 2;
     for (let y = 130; y < 580; y += 26) { g.beginPath(); g.moveTo(20, y); g.lineTo(400, y); g.stroke(); }
     g.fillStyle = "#1E2430"; g.font = font(600, 22);
     g.fillText("1)  3x² − 12 = 0", 26, 152);
-    g.fillText("2)  f(x) = 2x³ − 4x. Ableitung?", 26, 256);
-    g.fillText("3)  Beweise, dass √2 irrational ist.", 26, 360);
+    g.fillText(tr("2)  f(x) = 2x³ − 4x. Ableitung?", "2)  f(x) = 2x³ − 4x. Derivative?"), 26, 256);
+    g.fillText(tr("3)  Beweise, dass √2 irrational ist.", "3)  Prove that √2 is irrational."), 26, 360);
     g.fillStyle = "#2B4FA8"; g.font = font(500, 24, "cursive"); g.fillText("x = ???", 60, 200);
     g.fillStyle = "#C8402F"; g.font = font(800, 26); g.fillText("20 Min.", 300, 52);
   }, []);
@@ -244,8 +245,8 @@ export const Classroom: React.FC<{
   const board = useCanvasTex(900, 260, (g) => {
     g.fillStyle = "#24463A"; g.fillRect(0, 0, 900, 260);
     g.strokeStyle = "rgba(255,255,255,0.06)"; for (let i = 0; i < 40; i++) { g.beginPath(); g.moveTo(i * 37, 0); g.lineTo(i * 37 - 80, 260); g.stroke(); }
-    g.fillStyle = "#F2F0E6"; g.font = font(700, 62, "'Comic Sans MS', cursive"); g.fillText("KLASSENARBEIT", 40, 92);
-    g.font = font(500, 40, "'Comic Sans MS', cursive"); g.fillText("Handys weg!  Zeit: 45 Min.", 44, 162);
+    g.fillStyle = "#F2F0E6"; g.font = font(700, 62, "'Comic Sans MS', cursive"); g.fillText(tr("KLASSENARBEIT", "MATH TEST"), 40, 92);
+    g.font = font(500, 40, "'Comic Sans MS', cursive"); g.fillText(tr("Handys weg!  Zeit: 45 Min.", "Phones away!  Time: 45 min"), 44, 162);
     g.fillText("y = 3x² − 12", 520, 232);
   }, []);
   const clock = useCanvasTex(128, 128, (g) => {
@@ -322,11 +323,11 @@ const TornTest: React.FC<{ pos: Vec3; tear: number }> = ({ pos, tear }) => {
     const c = document.createElement("canvas"); c.width = 210; c.height = 297;
     const g = c.getContext("2d")!;
     g.fillStyle = "#FBF8F1"; g.fillRect(0, 0, 210, 297);
-    g.fillStyle = "#1E2430"; g.font = font(800, 16); g.fillText("MATHE – Klassenarbeit", 12, 28);
+    g.fillStyle = "#1E2430"; g.font = font(800, 16); g.fillText(tr("MATHE – Klassenarbeit", "MATH – Final Test"), 12, 28);
     g.strokeStyle = "#D8D2C4"; for (let y = 60; y < 290; y += 14) { g.beginPath(); g.moveTo(8, y); g.lineTo(202, y); g.stroke(); }
     const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace;
     return tx;
-  }, []);
+  }, [getLang()]); // eslint-disable-line react-hooks/exhaustive-deps
   const halves = useMemo(() => [0, 1].map((i) => {
     const tx = tex.clone(); tx.needsUpdate = true; tx.repeat.set(0.5, 1); tx.offset.set(i * 0.5, 0); return tx;
   }), [tex]);
@@ -622,9 +623,11 @@ export const EYE_OFFICE: Vec3 = [0, 1.22, 1.05];
 export const Office: React.FC<{ t: number; boss: { pose: Pose; joints?: Partial<Joints>; expr?: "neutral" | "happy" | "shock" } }> = ({ t, boss }) => {
   const cv = useCanvasTex(420, 594, (g) => {
     g.fillStyle = "#FFFFFF"; g.fillRect(0, 0, 420, 594);
-    g.fillStyle = "#1E2430"; g.font = font(800, 36); g.fillText("LEBENSLAUF", 30, 64);
+    g.fillStyle = "#1E2430"; g.font = font(800, 36); g.fillText(tr("LEBENSLAUF", "RÉSUMÉ"), 30, 64);
     g.font = font(600, 22); g.fillStyle = "#444C58";
-    const rows: [string, string][] = [["Schulabschluss:", "—"], ["Ausbildung:", "—"], ["Englisch:", "„yes“"], ["Mathe:", "—"], ["Stärken:", "Zocken, Schlafen"]];
+    const rows: [string, string][] = getLang() === "en"
+      ? [["Diploma:", "—"], ["Training:", "—"], ["Spanish:", "“sí”"], ["Math:", "—"], ["Strengths:", "Gaming, sleeping"]]
+      : [["Schulabschluss:", "—"], ["Ausbildung:", "—"], ["Englisch:", "„yes“"], ["Mathe:", "—"], ["Stärken:", "Zocken, Schlafen"]];
     rows.forEach(([a, b], i) => { g.fillText(a, 30, 130 + i * 56); g.fillStyle = i === 4 ? "#2B4FA8" : "#C8402F"; g.font = font(800, 24); g.fillText(b, 220, 130 + i * 56); g.fillStyle = "#444C58"; g.font = font(600, 22); });
   }, []);
   return (
@@ -668,12 +671,12 @@ export const Office: React.FC<{ t: number; boss: { pose: Pose; joints?: Partial<
 export const SchoolRuin: React.FC<{ t: number; max?: { pos: Vec3; rotY: number; pose: Pose; joints?: Partial<Joints>; expr?: "neutral" | "happy" | "shock" } }> = ({ t, max }) => {
   const sign = useCanvasTex(640, 120, (g) => {
     g.fillStyle = "#F2EEE4"; g.fillRect(0, 0, 640, 120);
-    g.fillStyle = "#3A3F47"; g.font = font(900, 70); g.textAlign = "center"; g.fillText("GESAMTSCHULE", 320, 88);
+    g.fillStyle = "#3A3F47"; g.font = font(900, 70); g.textAlign = "center"; g.fillText(tr("GESAMTSCHULE", "HIGH SCHOOL"), 320, 88);
   }, []);
   const closed = useCanvasTex(300, 150, (g) => {
     g.fillStyle = "#C8402F"; g.fillRect(0, 0, 300, 150);
     g.strokeStyle = "#FFFFFF"; g.lineWidth = 8; g.strokeRect(10, 10, 280, 130);
-    g.fillStyle = "#FFFFFF"; g.font = font(900, 46); g.textAlign = "center"; g.fillText("GESCHLOSSEN", 150, 82); g.font = font(700, 26); g.fillText("seit 10 Jahren", 150, 120);
+    g.fillStyle = "#FFFFFF"; g.font = font(900, 46); g.textAlign = "center"; g.fillText(tr("GESCHLOSSEN", "CLOSED"), 150, 82); g.font = font(700, 26); g.fillText(tr("seit 10 Jahren", "for 10 years"), 150, 120);
   }, []);
   const ivy = useMemo(() => {
     const r = rng(8);
